@@ -1,0 +1,15 @@
+name: static analysis
+
+on:
+  push:
+    branches:
+      - 1.x
+      - '*.x'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    uses: misaf/.github/.github/workflows/static-analysis.yml@93ce6a4e49ccc35f63ececdafb2ca5a04cd5e705 # master

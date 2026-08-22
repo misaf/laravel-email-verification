@@ -1,0 +1,73 @@
+name: Claude Issue Solver
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  solve:
+    if: github.event.label.name == 'ai-fix'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      actions: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.WORKFLOW_PAT }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: 8.4
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4
+        with:
+          timeout_minutes: 5
+          max_attempts: 5
+          command: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Claude
+        uses: anthropics/claude-code-action@9d7150bc8a3dae8149739a88019d192b579ad90c # v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.WORKFLOW_PAT }}
+          show_full_output: true
+
+          prompt: |
+            Solve GitHub issue #${{ github.event.issue.number }}.
+
+            Read the issue and inspect the repository.
+
+            If it is a bug or implementation task:
+            - Find the root cause.
+            - Implement the smallest correct fix.
+            - Add or update tests when appropriate.
+            - Run the relevant tests.
+            - Do not change unrelated code.
+            - Create a new branch (e.g. `git checkout -b ai-fix/issue-${{ github.event.issue.number }}`), commit your changes, and push it.
+            - Open a pull request against `1.x` with `gh pr create --base 1.x --title "..." --body "Closes #${{ github.event.issue.number }}"`.
+
+            If it is only a question:
+            - Investigate the repository.
+            - Post your answer as a comment on the issue with `gh issue comment ${{ github.event.issue.number }} --body "..."`. Do not change code.
+
+            Never push directly to the 1.x branch.
+
+            Do not delegate investigation to background/async subagents — this is a
+            one-shot run with nobody to wait for their result. Do all reading,
+            searching, and investigation yourself, synchronously, in this same turn.
+
+          claude_args: |
+            --model claude-opus-4-8
+            --effort low
+            --allowedTools "Bash(git:*),Bash(gh:*),Bash(composer:*),Bash(php:*),Bash(vendor/bin/pest:*),Bash(vendor/bin/phpstan:*),Bash(vendor/bin/pint:*),Read,Edit,Write,Grep,Glob"

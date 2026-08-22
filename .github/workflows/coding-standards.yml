@@ -1,0 +1,10 @@
+name: fix code styling
+
+on: [push]
+
+permissions:
+  contents: write
+
+jobs:
+  lint:
+    uses: misaf/.github/.github/workflows/coding-standards.yml@0d6486e765021789962e1280e9f81f132aaedca8 # main

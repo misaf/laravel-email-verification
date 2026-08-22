@@ -1,0 +1,45 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - 1.x
+      - '*.x'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    # API Platform introspects Eloquent resource schemas while building route
+    # metadata during `package:discover` (the composer post-autoload-dump hook),
+    # so every boot needs a reachable database. An empty in-memory SQLite DB
+    # satisfies the introspection without provisioning a service; the suite
+    # itself already runs on SQLite via phpunit.xml.
+    env:
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ':memory:'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, gd, intl, pdo_sqlite, sqlite3, zip
+          coverage: none
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run test suite
+        run: php artisan test --parallel

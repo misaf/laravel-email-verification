@@ -1,0 +1,44 @@
+name: Feature request
+description: Propose a host-app or package capability with a clear ownership boundary.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the user or developer problem without prescribing an implementation.
+    validations:
+      required: true
+  - type: dropdown
+    id: owner
+    attributes:
+      label: Proposed owner
+      description: Choose the narrowest public boundary that should own the capability.
+      options:
+        - Host application
+        - Existing Vendra package
+        - New reusable package
+        - Documentation or tooling
+        - Unsure
+    validations:
+      required: true
+  - type: input
+    id: package
+    attributes:
+      label: Package
+      description: Provide the existing package name when applicable.
+      placeholder: misaf/vendra-example
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: Explain the observable behavior and acceptance criteria.
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Architecture considerations
+      description: Note public contracts, optional integrations, tenant behavior, or coupling risks.

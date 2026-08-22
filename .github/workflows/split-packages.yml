@@ -1,0 +1,83 @@
+name: Split packages
+
+on:
+  push:
+    branches:
+      - 1.x
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: &packages
+          - laravel-email-validation-bouncer
+          - laravel-email-validation-emailable
+
+    steps:
+      - name: Check out monorepo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Split branch
+        if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+        uses: danharrin/monorepo-split-github-action@14e42e2437f674b8987c1f50ca3689116aea1893 # v2.4.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.MONOREPO_SPLIT_TOKEN }}
+        with:
+          branch: 1.x
+          package_directory: packages/${{ matrix.package }}
+          repository_organization: misaf
+          repository_name: ${{ matrix.package }}
+          user_name: misaf
+          user_email: misaf.1990@gmail.com
+
+      - name: Split tag
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        uses: danharrin/monorepo-split-github-action@14e42e2437f674b8987c1f50ca3689116aea1893 # v2.4.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.MONOREPO_SPLIT_TOKEN }}
+        with:
+          branch: 1.x
+          tag: ${{ github.ref_name }}
+          package_directory: packages/${{ matrix.package }}
+          repository_organization: misaf
+          repository_name: ${{ matrix.package }}
+          user_name: misaf
+          user_email: misaf.1990@gmail.com
+
+  release:
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    needs: split
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: *packages
+
+    steps:
+      - name: Create package release
+        env:
+          GITHUB_TOKEN: ${{ secrets.MONOREPO_SPLIT_TOKEN }}
+        run: |
+          if gh release view "${{ github.ref_name }}" --repo "misaf/${{ matrix.package }}" >/dev/null 2>&1; then
+            exit 0
+          fi
+
+          gh release create "${{ github.ref_name }}" \
+            --repo "misaf/${{ matrix.package }}" \
+            --verify-tag \
+            --generate-notes
