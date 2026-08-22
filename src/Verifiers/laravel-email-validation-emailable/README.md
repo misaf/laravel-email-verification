@@ -12,7 +12,7 @@ An [Emailable](https://emailable.com) deliverability driver for
 
 ## Requirements
 
-- PHP 8.3+
+- PHP 8.4+
 - Laravel 13
 - `misaf/laravel-email-validation`
 
@@ -71,12 +71,16 @@ if ($status === EmailVerificationStatus::Deliverable) {
 }
 ```
 
-## Testing
+## Contributing
 
-```bash
-composer test
-composer analyse
-```
+This repository is a read-only split of the
+[`misaf/laravel-email-validation`](https://github.com/misaf/laravel-email-validation)
+monorepo, published for installation via Composer. Its contents are generated,
+so commits made here are overwritten by the next split.
+
+Open issues and pull requests against the monorepo, where this driver lives at
+`src/Verifiers/laravel-email-validation-emailable` and its tests run alongside the
+core package.
 
 ## License
 
