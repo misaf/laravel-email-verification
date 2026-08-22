@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 1.x
+      - 2.x
     tags:
       - '*.*.*'
 
@@ -25,12 +26,6 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Split branch
         if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
