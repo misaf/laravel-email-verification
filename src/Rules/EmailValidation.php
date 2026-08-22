@@ -76,13 +76,21 @@ final class EmailValidation implements ValidationRule
     }
 
     /**
+     * Entries are trimmed and lower-cased so that a value configured with
+     * stray whitespace or mixed case still matches a parsed email host.
+     *
      * @return list<string>
      */
     private function allowedDomains(): array
     {
-        return array_values(array_filter(
-            Config::array('laravel-email-validation.allowed_domains', []),
-            static fn(mixed $item): bool => is_string($item),
-        ));
+        $domains = array_map(
+            static fn(string $domain): string => Str::lower(mb_trim($domain)),
+            array_filter(
+                Config::array('laravel-email-validation.allowed_domains', []),
+                static fn(mixed $item): bool => is_string($item),
+            ),
+        );
+
+        return array_values(array_filter($domains));
     }
 }

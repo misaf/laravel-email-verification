@@ -11,12 +11,16 @@ return [
     |
     | Restricts the domains accepted by the EmailValidation rule. Leave this
     | empty to impose no domain restriction. When populated, only addresses
-    | whose domain appears in this list are accepted.
+    | whose domain appears in this list are accepted. Entries are trimmed and
+    | lower-cased so a spaced-out env value ("a.com, b.com") still matches.
     |
     */
 
     'allowed_domains' => array_values(array_filter(
-        explode(',', (string) env('EMAIL_ALLOWED_DOMAINS', '')),
+        array_map(
+            static fn(string $domain): string => mb_strtolower(mb_trim($domain)),
+            explode(',', (string) env('EMAIL_ALLOWED_DOMAINS', '')),
+        ),
     )),
 
     /*

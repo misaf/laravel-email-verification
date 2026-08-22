@@ -28,6 +28,16 @@ it('rejects a non-string value with a translated message', function (): void {
         ->toBe([__('laravel-email-validation::validation.email.invalid')]);
 });
 
+it('matches an allowed domain configured with stray whitespace and mixed case', function (): void {
+    config(['laravel-email-validation.allowed_domains' => [' Example.COM ']]);
+
+    expect(emailValidationFailures('user@example.com'))->toBeEmpty();
+});
+
+it('matches an allowed domain against a mixed-case address', function (): void {
+    expect(emailValidationFailures('User@EXAMPLE.com'))->toBeEmpty();
+});
+
 it('rejects a disallowed domain', function (): void {
     expect(emailValidationFailures('user@blocked.test'))->not->toBeEmpty();
 });
