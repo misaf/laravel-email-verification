@@ -79,3 +79,21 @@ it('treats a malformed payload as unverifiable', function (): void {
     expect(app(EmailVerifierManager::class)->driver('bouncer')->verify('user@example.com'))
         ->toBe(EmailVerificationStatus::Unverifiable);
 });
+
+it('does not retry a client error', function (): void {
+    Http::fake(['*' => Http::response(['error' => 'Too Many Requests'], 429)]);
+
+    expect(app(EmailVerifierManager::class)->driver('bouncer')->verify('user@example.com'))
+        ->toBe(EmailVerificationStatus::Unverifiable);
+
+    Http::assertSentCount(1);
+});
+
+it('retries a server error before giving up', function (): void {
+    Http::fake(['*' => Http::response(null, 500)]);
+
+    expect(app(EmailVerifierManager::class)->driver('bouncer')->verify('user@example.com'))
+        ->toBe(EmailVerificationStatus::Unverifiable);
+
+    Http::assertSentCount(2);
+});

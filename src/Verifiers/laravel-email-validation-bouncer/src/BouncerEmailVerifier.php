@@ -20,9 +20,9 @@ final class BouncerEmailVerifier implements EmailVerifier
     /**
      * Server-side verification budget; must stay below the HTTP client timeout.
      */
-    private const SERVER_TIMEOUT = 5;
+    private const int SERVER_TIMEOUT = 5;
 
-    private const CLIENT_TIMEOUT = 6;
+    private const int CLIENT_TIMEOUT = 6;
 
     public function __construct(
         private string $host,
@@ -33,7 +33,7 @@ final class BouncerEmailVerifier implements EmailVerifier
     {
         try {
             $response = Http::timeout(self::CLIENT_TIMEOUT)
-                ->retry(2, 100)
+                ->retry(2, 100, $this->shouldRetry(...))
                 ->withHeaders([
                     'accept'    => 'application/json',
                     'x-api-key' => $this->apiKey,
@@ -67,5 +67,21 @@ final class BouncerEmailVerifier implements EmailVerifier
         }
 
         return EmailVerificationStatus::Unverifiable;
+    }
+
+    /**
+     * Retry only faults that a later attempt could plausibly resolve: a
+     * connection-level failure, or a server-side 5xx. Retrying a 4xx — a bad
+     * key, a malformed address, or a 429 rate limit — burns paid API quota
+     * without any chance of a different answer.
+     */
+    private function shouldRetry(Throwable $exception): bool
+    {
+        if ($exception instanceof ConnectionException) {
+            return true;
+        }
+
+        return $exception instanceof RequestException
+            && $exception->response->serverError();
     }
 }
