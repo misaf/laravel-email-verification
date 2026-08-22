@@ -1,0 +1,82 @@
+{
+    "name": "misaf/laravel-email-validation-bouncer",
+    "description": "Bouncer deliverability driver for Laravel email validation",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "misaf",
+        "email",
+        "validation",
+        "bouncer"
+    ],
+    "authors": [
+        {
+            "name": "Ehsan Mahmoodi",
+            "email": "misaf.1990@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/misaf/laravel-email-validation-bouncer",
+    "support": {
+        "issues": "https://github.com/misaf/laravel-email-validation-bouncer/issues",
+        "source": "https://github.com/misaf/laravel-email-validation-bouncer"
+    },
+    "require": {
+        "php": "^8.4",
+        "illuminate/http": "^13.0",
+        "illuminate/support": "^13.0",
+        "misaf/laravel-email-validation": "^1.0",
+        "spatie/laravel-package-tools": "^1.93"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.10",
+        "laravel/boost": "^2.5",
+        "laravel/pint": "^1.3",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.9",
+        "orchestra/testbench": "^11.1",
+        "pestphp/pest": "^5.1",
+        "pestphp/pest-plugin-arch": "^5.0",
+        "pestphp/pest-plugin-laravel": "^5.0",
+        "pestphp/pest-plugin-profanity": "^5.0",
+        "pestphp/pest-plugin-type-coverage": "^5.0",
+        "phpstan/extension-installer": "^1.4"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Misaf\\LaravelEmailValidationBouncer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Misaf\\LaravelEmailValidationBouncer\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true
+        },
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Misaf\\LaravelEmailValidationBouncer\\Providers\\BouncerServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse",
+        "format": "vendor/bin/pint",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage"
+    },
+    "$schema": "https://getcomposer.org/schema.json"
+}

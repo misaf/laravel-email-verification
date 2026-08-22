@@ -1,0 +1,4 @@
+interface:
+  display_name: "Laravel Bouncer Driver"
+  short_description: "Develop the Laravel Bouncer verification driver"
+  default_prompt: "Use $laravel-email-validation-bouncer-development to implement or review the Laravel Bouncer driver."
