@@ -10,11 +10,12 @@ A standalone, reusable email validation rule for Laravel applications.
 - Localized failure messages (en, de, fa)
 - Explicit deliverable, risky, undeliverable, and unverifiable outcomes
 
-The core package ships only the `null` driver (no external check). Concrete
-providers live in their own packages that register a driver via the manager's
-`extend`, e.g. `misaf/laravel-email-validation-emailable`.
+The core package is provider-neutral: it ships only the `null` driver, which
+performs no external check. Real deliverability verification comes from driver
+packages that register themselves via the manager's `extend`. Install the
+driver(s) you want — one, both, or none.
 
-The package depends only on framework packages, so it can be reused by any Laravel application without pulling in a wider ecosystem.
+The core depends only on framework packages, so it can be reused by any Laravel application without pulling in a wider ecosystem.
 
 ## Requirements
 
@@ -23,11 +24,37 @@ The package depends only on framework packages, so it can be reused by any Larav
 
 ## Installation
 
+The core package is required in every case:
+
 ```bash
 composer require misaf/laravel-email-validation
 ```
 
-The service provider is auto-registered.
+On its own this gives you the domain allow-list plus the `null` driver, which
+treats every address as deliverable — useful for local and testing
+environments, but it performs no real verification.
+
+### First-party drivers
+
+To actually verify deliverability, add one or both driver packages. They are
+independent of each other and can be installed together:
+
+```bash
+composer require misaf/laravel-email-validation-emailable
+composer require misaf/laravel-email-validation-bouncer
+```
+
+| Package | Driver name | Provider | Config file |
+| --- | --- | --- | --- |
+| *(core)* | `null` | none — always `Deliverable` | `laravel-email-validation.php` |
+| `misaf/laravel-email-validation-emailable` | `emailable` | [Emailable](https://emailable.com) | `laravel-email-validation-emailable.php` |
+| `misaf/laravel-email-validation-bouncer` | `bouncer` | [Bouncer](https://usebouncer.com) | `laravel-email-validation-bouncer.php` |
+
+Each driver package requires the core and is listed under the core's composer
+`suggest`, so `composer require misaf/laravel-email-validation` will prompt you
+with what is available.
+
+All service providers are auto-registered.
 
 Publish the config to customise the allowed domains and deliverability wiring:
 
@@ -35,12 +62,42 @@ Publish the config to customise the allowed domains and deliverability wiring:
 php artisan vendor:publish --tag=laravel-email-validation-config
 ```
 
+Each driver package publishes its own config under a matching tag, e.g.:
+
+```bash
+php artisan vendor:publish --tag=laravel-email-validation-emailable-config
+php artisan vendor:publish --tag=laravel-email-validation-bouncer-config
+```
+
+### Using both drivers together
+
+Both drivers register under distinct names on the same manager, so they
+coexist. `default` picks the one used when no driver is named, and any rule or
+facade call can override it per use:
+
+```env
+EMAIL_VERIFIER_DRIVER=emailable
+
+EMAILABLE_HOST=https://api.emailable.com/v1/verify
+EMAILABLE_API_KEY=...
+
+BOUNCER_HOST=https://api.usebouncer.com/v1.1/email/verify
+BOUNCER_API_KEY=...
+```
+
+```php
+new EmailValidation();            // the configured default — "emailable" above
+new EmailValidation('bouncer');   // this rule only, regardless of the default
+```
+
 ## Configuration
 
 `config/laravel-email-validation.php`:
 
 - `allowed_domains` — array of accepted domains. Leave empty to allow any domain. Defaults to the comma-separated `EMAIL_ALLOWED_DOMAINS` env value.
-- `default` — the deliverability driver name (`EMAIL_VERIFIER_DRIVER`). The core package provides only `null`; installing a driver package makes its driver name available here.
+- `default` — the deliverability driver name (`EMAIL_VERIFIER_DRIVER`). The core package provides only `null`; installing a driver package makes its driver name (`emailable`, `bouncer`) available here.
+
+Entries in `allowed_domains` are trimmed and lower-cased before comparison, so `EMAIL_ALLOWED_DOMAINS=example.com, Example.org` works as written.
 
 ## Usage
 
@@ -56,7 +113,7 @@ TextInput::make('email')
     ]);
 ```
 
-`new EmailValidation()` uses the configured default driver. Pass a driver name to override per use: `new EmailValidation('my-driver')`.
+`new EmailValidation()` uses the configured default driver. Pass a driver name to override per use: `new EmailValidation('bouncer')`.
 
 ## Verification Outcomes
 
@@ -77,8 +134,8 @@ reported as deliverable by concrete drivers.
 use Misaf\LaravelEmailValidation\Facades\EmailVerifier;
 use Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus;
 
-$status = EmailVerifier::verify('user@example.com');            // default driver
-$status = EmailVerifier::driver('my-driver')->verify($email);  // specific driver
+$status = EmailVerifier::verify('user@example.com');           // default driver
+$status = EmailVerifier::driver('bouncer')->verify($email);   // specific driver
 
 if ($status === EmailVerificationStatus::Deliverable) {
     // ...
