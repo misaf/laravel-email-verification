@@ -7,7 +7,6 @@ namespace Misaf\LaravelEmailValidation\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Translation\PotentiallyTranslatedString;
 use Misaf\LaravelEmailValidation\EmailVerifierManager;
@@ -35,8 +34,6 @@ final class EmailValidation implements ValidationRule
         $domain = $this->getEmailHost($value);
 
         if ( ! $this->isAllowedDomain($domain, $allowedDomains)) {
-            Log::debug('Email domain not allowed.', ['domain' => $domain]);
-
             $fail(__('laravel-email-validation::validation.email.domain_not_allowed', [
                 'domain'  => $domain,
                 'allowed' => implode(', ', $allowedDomains),
