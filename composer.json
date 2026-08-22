@@ -45,6 +45,10 @@
         "pestphp/pest-plugin-type-coverage": "^5.0",
         "phpstan/extension-installer": "^1.4"
     },
+    "suggest": {
+        "misaf/laravel-email-validation-bouncer": "Adds the \"bouncer\" deliverability driver, backed by the Bouncer API (https://usebouncer.com)",
+        "misaf/laravel-email-validation-emailable": "Adds the \"emailable\" deliverability driver, backed by the Emailable API (https://emailable.com)"
+    },
     "minimum-stability": "stable",
     "prefer-stable": true,
     "autoload": {
