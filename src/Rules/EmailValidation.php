@@ -9,34 +9,19 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Translation\PotentiallyTranslatedString;
 use Misaf\LaravelEmailValidation\EmailVerifierManager;
 use Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus;
 
 final class EmailValidation implements ValidationRule
 {
-    /** @var list<string> */
-    private array $allowedDomains;
-
     /**
-     * @param string|null $verifier Deliverability driver name; null uses the configured default.
+     * @param  string|null  $verifier  Deliverability driver name; null uses the configured default.
      */
-    public function __construct(private ?string $verifier = null)
-    {
-        $raw = Config::array('laravel-email-validation.allowed_domains', []);
-
-        $stringsOnly = array_filter(
-            $raw,
-            static fn($item): bool => is_string($item),
-        );
-
-        $this->allowedDomains = array_values($stringsOnly);
-    }
+    public function __construct(private ?string $verifier = null) {}
 
     /**
-     * @param string $attribute
-     * @param mixed $value
-     * @param Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
-     * @return void
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -46,13 +31,15 @@ final class EmailValidation implements ValidationRule
             return;
         }
 
+        $allowedDomains = $this->allowedDomains();
         $domain = $this->getEmailHost($value);
 
-        if ( ! $this->isAllowedDomain($domain)) {
-            Log::error('Email domain not allowed.', ['attribute' => $attribute, 'email' => $value, 'domain' => $domain]);
+        if ( ! $this->isAllowedDomain($domain, $allowedDomains)) {
+            Log::debug('Email domain not allowed.', ['domain' => $domain]);
+
             $fail(__('laravel-email-validation::validation.email.domain_not_allowed', [
                 'domain'  => $domain,
-                'allowed' => implode(', ', $this->allowedDomains),
+                'allowed' => implode(', ', $allowedDomains),
             ]));
 
             return;
@@ -70,18 +57,35 @@ final class EmailValidation implements ValidationRule
 
     private function getEmailHost(string $email): string
     {
+        if ( ! Str::contains($email, '@')) {
+            return '';
+        }
+
         return Str::lower(Str::after($email, '@'));
     }
 
     /**
      * An empty allow-list imposes no domain restriction.
+     *
+     * @param  list<string>  $allowedDomains
      */
-    private function isAllowedDomain(string $domain): bool
+    private function isAllowedDomain(string $domain, array $allowedDomains): bool
     {
-        if ([] === $this->allowedDomains) {
+        if ([] === $allowedDomains) {
             return true;
         }
 
-        return in_array($domain, $this->allowedDomains, true);
+        return in_array($domain, $allowedDomains, true);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function allowedDomains(): array
+    {
+        return array_values(array_filter(
+            Config::array('laravel-email-validation.allowed_domains', []),
+            static fn(mixed $item): bool => is_string($item),
+        ));
     }
 }

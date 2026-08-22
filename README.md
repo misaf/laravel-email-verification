@@ -18,7 +18,7 @@ The package depends only on framework packages, so it can be reused by any Larav
 
 ## Requirements
 
-- PHP 8.3+
+- PHP 8.4+
 - Laravel 13
 
 ## Installation

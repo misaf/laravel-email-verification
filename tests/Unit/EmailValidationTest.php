@@ -44,7 +44,7 @@ it('passes an allowed domain with the null driver', function (): void {
 it('rejects an address reported as risky', function (): void {
     app()->make(EmailVerifierManager::class)->extend(
         'always-risky',
-        fn(): EmailVerifier => new class () implements EmailVerifier {
+        fn(): EmailVerifier => new class implements EmailVerifier {
             public function verify(string $email): EmailVerificationStatus
             {
                 return EmailVerificationStatus::Risky;

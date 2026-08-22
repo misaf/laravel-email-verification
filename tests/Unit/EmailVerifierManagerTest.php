@@ -22,7 +22,7 @@ it('resolves the null driver as the default', function (): void {
 
 it('supports driver packages registering via extend', function (): void {
     $manager = manager();
-    $manager->extend('always-undeliverable', fn(): EmailVerifier => new class () implements EmailVerifier {
+    $manager->extend('always-undeliverable', fn(): EmailVerifier => new class implements EmailVerifier {
         public function verify(string $email): EmailVerificationStatus
         {
             return EmailVerificationStatus::Undeliverable;
@@ -36,7 +36,7 @@ it('supports driver packages registering via extend', function (): void {
 it('fails validation when the resolved driver reports the address undeliverable', function (): void {
     config(['laravel-email-validation.allowed_domains' => []]);
 
-    manager()->extend('always-undeliverable', fn(): EmailVerifier => new class () implements EmailVerifier {
+    manager()->extend('always-undeliverable', fn(): EmailVerifier => new class implements EmailVerifier {
         public function verify(string $email): EmailVerificationStatus
         {
             return EmailVerificationStatus::Undeliverable;
