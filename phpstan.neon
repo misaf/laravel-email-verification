@@ -3,10 +3,18 @@ parameters:
     paths:
         - src
 
-    # Nested driver packages are standalone packages with their own tooling.
+    # Driver package tests live inside src/ by monorepo layout; the analysed
+    # surface is production code only, matching each driver package's own
+    # phpstan.neon.
     excludePaths:
-        - src/Verifiers/laravel-email-validation-bouncer
-        - src/Verifiers/laravel-email-validation-emailable
+        - src/Verifiers/laravel-email-validation-bouncer/tests
+        - src/Verifiers/laravel-email-validation-emailable/tests
+
+    # Each driver package ships its own config file; without this, larastan
+    # only recognises the root config/ directory and flags their env() calls.
+    configDirectories:
+        - config
+        - src/Verifiers/*/config
 
     # Level 10 is the highest level
     level: 10
