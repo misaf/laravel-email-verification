@@ -23,8 +23,9 @@ beforeEach(function (): void {
     config(['laravel-email-validation.default' => 'null']);
 });
 
-it('rejects a non-string value', function (): void {
-    expect(emailValidationFailures(['user@example.com']))->not->toBeEmpty();
+it('rejects a non-string value with a translated message', function (): void {
+    expect(emailValidationFailures(['user@example.com']))
+        ->toBe([__('laravel-email-validation::validation.email.invalid')]);
 });
 
 it('rejects a disallowed domain', function (): void {

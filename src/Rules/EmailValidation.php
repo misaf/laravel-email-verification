@@ -26,7 +26,7 @@ final class EmailValidation implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if ( ! is_string($value)) {
-            $fail($attribute);
+            $fail(__('laravel-email-validation::validation.email.invalid'));
 
             return;
         }
