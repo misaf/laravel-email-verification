@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
+use Misaf\LaravelEmailValidation\Tests\AllDriversTestCase;
 use Misaf\LaravelEmailValidation\Tests\TestCase;
 use Misaf\LaravelEmailValidationBouncer\Tests\TestCase as BouncerTestCase;
 use Misaf\LaravelEmailValidationEmailable\Tests\TestCase as EmailableTestCase;
 
-uses(TestCase::class)->in(__DIR__);
+uses(TestCase::class)->in(__DIR__ . '/Unit');
+
+uses(AllDriversTestCase::class)->in(__DIR__ . '/Feature');
 
 uses(BouncerTestCase::class)->in(__DIR__ . '/../src/Verifiers/laravel-email-validation-bouncer/tests');
 

@@ -6,8 +6,9 @@
 >
     <testsuites>
         <testsuite name="Unit">
-            <directory>tests</directory>
+            <directory>tests/Unit</directory>
             <directory>src/Verifiers/*/tests</directory>
+            <file>tests/ArchTest.php</file>
         </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
