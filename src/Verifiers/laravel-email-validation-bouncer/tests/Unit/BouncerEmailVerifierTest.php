@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Misaf\LaravelEmailValidation\EmailVerifierManager;
 use Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus;
 use Misaf\LaravelEmailValidationBouncer\BouncerEmailVerifier;
@@ -75,6 +76,9 @@ it('treats a rate limited request as unverifiable', function (): void {
 
 it('treats a malformed payload as unverifiable', function (): void {
     Http::fake(['*' => Http::response(['unexpected' => true], 200)]);
+    Log::shouldReceive('error')
+        ->once()
+        ->with('Bouncer API returned an unexpected response.', ['status' => 200]);
 
     expect(app(EmailVerifierManager::class)->driver('bouncer')->verify('user@example.com'))
         ->toBe(EmailVerificationStatus::Unverifiable);

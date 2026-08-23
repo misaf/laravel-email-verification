@@ -35,7 +35,7 @@ final class EmailableEmailVerifier implements EmailVerifier
             $payload = $response->ok() ? $response->json() : null;
 
             if ( ! is_array($payload) || ! isset($payload['state'])) {
-                Log::error('Emailable API returned an unexpected response.', ['email' => $email, 'response' => $payload]);
+                Log::error('Emailable API returned an unexpected response.', ['status' => $response->status()]);
 
                 return EmailVerificationStatus::Unverifiable;
             }
@@ -46,12 +46,12 @@ final class EmailableEmailVerifier implements EmailVerifier
                 'risky'         => EmailVerificationStatus::Risky,
                 default         => EmailVerificationStatus::Unverifiable,
             };
-        } catch (ConnectionException $e) {
-            Log::error('Emailable API connection timeout.', ['exception' => $e]);
+        } catch (ConnectionException) {
+            Log::error('Emailable API connection timeout.');
         } catch (RequestException $e) {
-            Log::error('Emailable API request error.', ['exception' => $e]);
+            Log::error('Emailable API request error.', ['status' => $e->response->status()]);
         } catch (Throwable $e) {
-            Log::error('Unexpected Emailable verification error.', ['exception' => $e]);
+            Log::error('Unexpected Emailable verification error.', ['exception' => $e::class]);
         }
 
         return EmailVerificationStatus::Unverifiable;

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Misaf\LaravelEmailValidation\EmailVerifierManager;
 use Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus;
 use Misaf\LaravelEmailValidationEmailable\EmailableEmailVerifier;
@@ -56,6 +57,9 @@ it('treats a failed request as unverifiable', function (): void {
 
 it('treats an unexpected payload as unverifiable', function (): void {
     Http::fake(['*' => Http::response(['unexpected' => true], 200)]);
+    Log::shouldReceive('error')
+        ->once()
+        ->with('Emailable API returned an unexpected response.', ['status' => 200]);
 
     expect(app(EmailVerifierManager::class)->driver('emailable')->verify('user@example.com'))
         ->toBe(EmailVerificationStatus::Unverifiable);

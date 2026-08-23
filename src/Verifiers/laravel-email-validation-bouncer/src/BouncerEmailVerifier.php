@@ -47,7 +47,7 @@ final class BouncerEmailVerifier implements EmailVerifier
             $status = is_array($payload) ? ($payload['status'] ?? null) : null;
 
             if ( ! is_string($status)) {
-                Log::error('Bouncer API returned an unexpected response.', ['email' => $email, 'response' => $payload]);
+                Log::error('Bouncer API returned an unexpected response.', ['status' => $response->status()]);
 
                 return EmailVerificationStatus::Unverifiable;
             }
@@ -58,12 +58,12 @@ final class BouncerEmailVerifier implements EmailVerifier
                 'risky'         => EmailVerificationStatus::Risky,
                 default         => EmailVerificationStatus::Unverifiable,
             };
-        } catch (ConnectionException $e) {
-            Log::error('Bouncer API connection timeout.', ['exception' => $e]);
+        } catch (ConnectionException) {
+            Log::error('Bouncer API connection timeout.');
         } catch (RequestException $e) {
-            Log::error('Bouncer API request error.', ['exception' => $e]);
+            Log::error('Bouncer API request error.', ['status' => $e->response->status()]);
         } catch (Throwable $e) {
-            Log::error('Unexpected Bouncer verification error.', ['exception' => $e]);
+            Log::error('Unexpected Bouncer verification error.', ['exception' => $e::class]);
         }
 
         return EmailVerificationStatus::Unverifiable;

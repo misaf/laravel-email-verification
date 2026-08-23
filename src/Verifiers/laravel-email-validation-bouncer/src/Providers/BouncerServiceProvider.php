@@ -31,8 +31,8 @@ final class BouncerServiceProvider extends PackageServiceProvider
         $this->app->make(EmailVerifierManager::class)->extend(
             'bouncer',
             fn(): EmailVerifier => new BouncerEmailVerifier(
-                Config::string('laravel-email-validation-bouncer.host', ''),
-                Config::string('laravel-email-validation-bouncer.api_key', ''),
+                Config::string('laravel-email-validation-bouncer.host'),
+                Config::string('laravel-email-validation-bouncer.api_key'),
             ),
         );
     }
