@@ -94,10 +94,18 @@ new EmailValidation('bouncer');   // this rule only, regardless of the default
 
 `config/laravel-email-validation.php`:
 
-- `allowed_domains` — array of accepted domains. Leave empty to allow any domain. Defaults to the comma-separated `EMAIL_ALLOWED_DOMAINS` env value.
 - `default` — the deliverability driver name (`EMAIL_VERIFIER_DRIVER`). The core package provides only `null`; installing a driver package makes its driver name (`emailable`, `bouncer`) available here.
 
-Entries in `allowed_domains` are trimmed and lower-cased before comparison, so `EMAIL_ALLOWED_DOMAINS=example.com, Example.org` works as written.
+Add the domain allow-list to `config/services.php`. Leave it empty to allow any domain:
+
+```php
+'email_validation' => [
+    'allowed_domains' => [
+        'example.com',
+        'example.org',
+    ],
+],
+```
 
 ## Usage
 

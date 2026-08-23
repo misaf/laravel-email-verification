@@ -16,7 +16,7 @@ use Misaf\LaravelEmailValidationEmailable\EmailableEmailVerifier;
  */
 beforeEach(function (): void {
     config([
-        'laravel-email-validation.allowed_domains'   => [],
+        'services.email_validation.allowed_domains'  => [],
         'laravel-email-validation-bouncer.host'      => 'https://api.usebouncer.test/v1.1/email/verify',
         'laravel-email-validation-bouncer.api_key'   => 'bouncer-key',
         'laravel-email-validation-emailable.host'    => 'https://api.emailable.test/verify',

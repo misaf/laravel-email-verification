@@ -19,19 +19,13 @@ function emailValidationFailures(mixed $email, ?string $verifier = null): array
 }
 
 beforeEach(function (): void {
-    config(['laravel-email-validation.allowed_domains' => ['example.com']]);
+    config(['services.email_validation.allowed_domains' => ['example.com']]);
     config(['laravel-email-validation.default' => 'null']);
 });
 
 it('rejects a non-string value with a translated message', function (): void {
     expect(emailValidationFailures(['user@example.com']))
         ->toBe([__('laravel-email-validation::validation.email.invalid')]);
-});
-
-it('matches an allowed domain configured with stray whitespace and mixed case', function (): void {
-    config(['laravel-email-validation.allowed_domains' => [' Example.COM ']]);
-
-    expect(emailValidationFailures('user@example.com'))->toBeEmpty();
 });
 
 it('matches an allowed domain against a mixed-case address', function (): void {
@@ -43,7 +37,7 @@ it('rejects a disallowed domain', function (): void {
 });
 
 it('imposes no domain restriction when the allow-list is empty', function (): void {
-    config(['laravel-email-validation.allowed_domains' => []]);
+    config(['services.email_validation.allowed_domains' => []]);
 
     expect(emailValidationFailures('user@any-domain.test'))->toBeEmpty();
 });

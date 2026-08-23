@@ -18,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Both drivers now retry only faults a later attempt could resolve — connection failures and 5xx responses. A 4xx, including a 429 rate limit, is no longer retried and no longer burns paid API quota.
-- `allowed_domains` entries are trimmed and lower-cased before comparison, in both the shipped config and the rule, so `EMAIL_ALLOWED_DOMAINS=example.com, Example.org` matches as written.
 - PHPStan at level 10 now analyses the driver packages, which were previously excluded and unchecked.
 - Driver package tooling is consolidated at the repository root. The driver packages no longer carry their own PHPStan, PHPUnit, or Pint configuration, Composer scripts, or development dependencies; all development happens in the monorepo.
 - Driver READMEs point contributors at the monorepo and state the correct PHP requirement (8.4+, previously documented as 8.3+).

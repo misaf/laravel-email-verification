@@ -29,7 +29,7 @@ Treat `the package root` as the standalone, provider-neutral core.
 
 ## Validation Rule
 
-- Treat an empty `allowed_domains` list as unrestricted.
+- Treat an empty `services.email_validation.allowed_domains` list as unrestricted.
 - Normalize the extracted domain before comparing it with the configured list.
 - Use `EmailValidation` after Laravel's syntax-oriented email rule; this rule owns domain policy and deliverability, not RFC syntax validation.
 - Resolve drivers through the manager and return localized messages from the `laravel-email-validation` translation namespace.

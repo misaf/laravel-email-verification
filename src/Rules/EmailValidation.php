@@ -35,8 +35,7 @@ final class EmailValidation implements ValidationRule
 
         if ( ! $this->isAllowedDomain($domain, $allowedDomains)) {
             $fail(__('laravel-email-validation::validation.email.domain_not_allowed', [
-                'domain'  => $domain,
-                'allowed' => implode(', ', $allowedDomains),
+                'domain' => $domain,
             ]));
 
             return;
@@ -54,17 +53,13 @@ final class EmailValidation implements ValidationRule
 
     private function getEmailHost(string $email): string
     {
-        if ( ! Str::contains($email, '@')) {
-            return '';
-        }
-
         return Str::lower(Str::after($email, '@'));
     }
 
     /**
      * An empty allow-list imposes no domain restriction.
      *
-     * @param  list<string>  $allowedDomains
+     * @param  array<array-key, mixed>  $allowedDomains
      */
     private function isAllowedDomain(string $domain, array $allowedDomains): bool
     {
@@ -75,22 +70,9 @@ final class EmailValidation implements ValidationRule
         return in_array($domain, $allowedDomains, true);
     }
 
-    /**
-     * Entries are trimmed and lower-cased so that a value configured with
-     * stray whitespace or mixed case still matches a parsed email host.
-     *
-     * @return list<string>
-     */
+    /** @return array<array-key, mixed> */
     private function allowedDomains(): array
     {
-        $domains = array_map(
-            static fn(string $domain): string => Str::lower(mb_trim($domain)),
-            array_filter(
-                Config::array('laravel-email-validation.allowed_domains', []),
-                static fn(mixed $item): bool => is_string($item),
-            ),
-        );
-
-        return array_values(array_filter($domains));
+        return Config::array('services.email_validation.allowed_domains', []);
     }
 }

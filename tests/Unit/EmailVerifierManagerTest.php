@@ -34,7 +34,7 @@ it('supports driver packages registering via extend', function (): void {
 });
 
 it('fails validation when the resolved driver reports the address undeliverable', function (): void {
-    config(['laravel-email-validation.allowed_domains' => []]);
+    config(['services.email_validation.allowed_domains' => []]);
 
     manager()->extend('always-undeliverable', fn(): EmailVerifier => new class implements EmailVerifier {
         public function verify(string $email): EmailVerificationStatus
