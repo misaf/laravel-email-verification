@@ -31,8 +31,8 @@ final class EmailableServiceProvider extends PackageServiceProvider
         $this->app->make(EmailVerifierManager::class)->extend(
             'emailable',
             fn(): EmailVerifier => new EmailableEmailVerifier(
-                Config::string('laravel-email-validation-emailable.host'),
-                Config::string('laravel-email-validation-emailable.api_key'),
+                Config::string('laravel-email-validation-emailable.host', ''),
+                Config::string('laravel-email-validation-emailable.api_key', ''),
             ),
         );
     }
