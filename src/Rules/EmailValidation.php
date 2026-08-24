@@ -73,6 +73,9 @@ final class EmailValidation implements ValidationRule
     /** @return array<array-key, mixed> */
     private function allowedDomains(): array
     {
-        return Config::array('services.email_validation.allowed_domains', []);
+        return array_map(
+            static fn(mixed $domain): mixed => is_string($domain) ? Str::lower($domain) : $domain,
+            Config::array('services.email_validation.allowed_domains', []),
+        );
     }
 }
