@@ -20,6 +20,12 @@ it('resolves the null driver as the default', function (): void {
         ->and(manager()->driver()->verify('user@example.com'))->toBe(EmailVerificationStatus::Deliverable);
 });
 
+it('falls back to the null driver when the package config is missing', function (): void {
+    config(['laravel-email-validation' => []]);
+
+    expect(manager()->driver())->toBeInstanceOf(NullEmailVerifier::class);
+});
+
 it('supports driver packages registering via extend', function (): void {
     $manager = manager();
     $manager->extend('always-undeliverable', fn(): EmailVerifier => new class implements EmailVerifier {

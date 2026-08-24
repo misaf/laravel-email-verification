@@ -21,7 +21,7 @@ final class EmailVerifierManager extends Manager
 {
     public function getDefaultDriver(): string
     {
-        return Config::string('laravel-email-validation.default');
+        return Config::string('laravel-email-validation.default', 'null');
     }
 
     public function verifier(?string $driver = null): EmailVerifier

@@ -59,3 +59,18 @@ it('rejects an address reported as risky', function (): void {
 
     expect(emailValidationFailures('user@example.com', 'always-risky'))->not->toBeEmpty();
 });
+
+it('rejects an address reported as unverifiable with a service unavailable message', function (): void {
+    app()->make(EmailVerifierManager::class)->extend(
+        'always-unverifiable',
+        fn(): EmailVerifier => new class implements EmailVerifier {
+            public function verify(string $email): EmailVerificationStatus
+            {
+                return EmailVerificationStatus::Unverifiable;
+            }
+        },
+    );
+
+    expect(emailValidationFailures('user@example.com', 'always-unverifiable'))
+        ->toBe([__('laravel-email-validation::validation.email.service_unavailable')]);
+});

@@ -10,10 +10,6 @@ use Misaf\LaravelEmailValidation\Verifiers\NullEmailVerifier;
 use Misaf\LaravelEmailValidationBouncer\BouncerEmailVerifier;
 use Misaf\LaravelEmailValidationEmailable\EmailableEmailVerifier;
 
-/**
- * Both first-party drivers installed side by side. Each registers under its
- * own name, so the two coexist and `default` selects between them.
- */
 beforeEach(function (): void {
     config([
         'services.email_validation.allowed_domains'  => [],
