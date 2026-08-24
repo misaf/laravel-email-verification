@@ -7,11 +7,15 @@
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
-            <directory>src/Verifiers/*/tests</directory>
-            <file>tests/ArchTest.php</file>
+            <directory>src/Verifiers/*/tests/Unit</directory>
         </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
+            <directory>src/Verifiers/*/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="Architecture">
+            <file>tests/ArchTest.php</file>
+            <directory suffix="ArchTest.php">src/Verifiers</directory>
         </testsuite>
     </testsuites>
 

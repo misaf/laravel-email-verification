@@ -32,6 +32,12 @@ it('matches an allowed domain against a mixed-case address', function (): void {
     expect(emailValidationFailures('User@EXAMPLE.com'))->toBeEmpty();
 });
 
+it('matches a mixed-case configured domain case-insensitively', function (): void {
+    config(['services.email_validation.allowed_domains' => ['EXAMPLE.COM']]);
+
+    expect(emailValidationFailures('User@example.com'))->toBeEmpty();
+});
+
 it('rejects a disallowed domain', function (): void {
     expect(emailValidationFailures('user@blocked.test'))->not->toBeEmpty();
 });

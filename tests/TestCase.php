@@ -6,6 +6,8 @@ namespace Misaf\LaravelEmailValidation\Tests;
 
 use Illuminate\Foundation\Application;
 use Misaf\LaravelEmailValidation\Providers\EmailValidationServiceProvider;
+use Misaf\LaravelEmailValidationBouncer\Providers\BouncerServiceProvider;
+use Misaf\LaravelEmailValidationEmailable\Providers\EmailableServiceProvider;
 use Orchestra\Testbench\TestCase as TestbenchTestCase;
 
 abstract class TestCase extends TestbenchTestCase
@@ -18,6 +20,8 @@ abstract class TestCase extends TestbenchTestCase
     {
         return [
             EmailValidationServiceProvider::class,
+            BouncerServiceProvider::class,
+            EmailableServiceProvider::class,
         ];
     }
 }

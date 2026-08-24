@@ -36,11 +36,6 @@
             "Misaf\\LaravelEmailValidationBouncer\\": "src/"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Misaf\\LaravelEmailValidationBouncer\\Tests\\": "tests/"
-        }
-    },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",

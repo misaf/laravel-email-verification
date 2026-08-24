@@ -60,9 +60,7 @@
         "psr-4": {
             "Misaf\\LaravelEmailValidation\\Tests\\": "tests/",
             "Misaf\\LaravelEmailValidationBouncer\\": "src/Verifiers/laravel-email-validation-bouncer/src/",
-            "Misaf\\LaravelEmailValidationBouncer\\Tests\\": "src/Verifiers/laravel-email-validation-bouncer/tests/",
-            "Misaf\\LaravelEmailValidationEmailable\\": "src/Verifiers/laravel-email-validation-emailable/src/",
-            "Misaf\\LaravelEmailValidationEmailable\\Tests\\": "src/Verifiers/laravel-email-validation-emailable/tests/"
+            "Misaf\\LaravelEmailValidationEmailable\\": "src/Verifiers/laravel-email-validation-emailable/src/"
         }
     },
     "config": {

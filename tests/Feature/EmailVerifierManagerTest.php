@@ -39,6 +39,20 @@ it('supports driver packages registering via extend', function (): void {
         ->toBe(EmailVerificationStatus::Undeliverable);
 });
 
+it('resolves a registered driver as the configured default', function (): void {
+    $manager = manager();
+    $manager->extend('custom-default', fn(): EmailVerifier => new class implements EmailVerifier {
+        public function verify(string $email): EmailVerificationStatus
+        {
+            return EmailVerificationStatus::Risky;
+        }
+    });
+    config(['laravel-email-validation.default' => 'custom-default']);
+
+    expect($manager->driver()->verify('user@example.com'))
+        ->toBe(EmailVerificationStatus::Risky);
+});
+
 it('fails validation when the resolved driver reports the address undeliverable', function (): void {
     config(['services.email_validation.allowed_domains' => []]);
 
