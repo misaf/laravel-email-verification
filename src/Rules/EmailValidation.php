@@ -75,7 +75,7 @@ final class EmailValidation implements ValidationRule
     {
         return array_map(
             static fn(mixed $domain): mixed => is_string($domain) ? Str::lower($domain) : $domain,
-            Config::array('services.email_validation.allowed_domains', []),
+            Config::array('laravel-email-verification.allowed_domains', []),
         );
     }
 }

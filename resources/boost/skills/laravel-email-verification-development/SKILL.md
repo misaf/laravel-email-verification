@@ -1,9 +1,9 @@
 ---
 name: laravel-email-verification-development
-description: "Create, modify, review, or test the provider-neutral Laravel Email Validation core package in the package root. Trigger for EmailVerifier, EmailVerifierManager, EmailVerificationStatus, EmailValidation, NullEmailVerifier, custom email-verification drivers, allowed email domains, deliverability validation, or the laravel-email-verification configuration and translations."
+description: "Create, modify, review, or test the provider-neutral Laravel Email Verification core package in the package root. Trigger for EmailVerifier, EmailVerifierManager, EmailVerificationStatus, EmailValidation, NullEmailVerifier, custom email-verification drivers, allowed email domains, deliverability validation, or the laravel-email-verification configuration and translations."
 ---
 
-# Laravel Email Validation
+# Laravel Email Verification
 
 ## Workflow
 
@@ -29,7 +29,7 @@ Treat `the package root` as the standalone, provider-neutral core.
 
 ## Validation Rule
 
-- Treat an empty `services.email_validation.allowed_domains` list as unrestricted.
+- Treat an empty `laravel-email-verification.allowed_domains` list as unrestricted.
 - Normalize the extracted domain before comparing it with the configured list.
 - Use `EmailValidation` after Laravel's syntax-oriented email rule; this rule owns domain policy and deliverability, not RFC syntax validation.
 - Resolve drivers through the manager and return localized messages from the `laravel-email-verification` translation namespace.

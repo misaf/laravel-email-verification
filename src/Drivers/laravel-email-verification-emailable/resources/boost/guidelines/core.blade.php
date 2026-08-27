@@ -1,4 +1,4 @@
-## Laravel Email Validation Emailable
+## Laravel Email Verification Emailable
 
 The `misaf/laravel-email-verification-emailable` package is the optional Emailable API driver for the provider-neutral `misaf/laravel-email-verification` core.
 

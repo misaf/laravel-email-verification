@@ -1,4 +1,4 @@
-## Laravel Email Validation Bouncer
+## Laravel Email Verification Bouncer
 
 The `misaf/laravel-email-verification-bouncer` package is the optional Bouncer API driver for the provider-neutral `misaf/laravel-email-verification` core.
 

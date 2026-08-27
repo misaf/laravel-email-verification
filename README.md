@@ -1,6 +1,6 @@
-# Laravel Email Validation
+# Laravel Email Verification
 
-A standalone, reusable email validation rule for Laravel applications.
+Provider-neutral email domain and deliverability validation for Laravel applications.
 
 ## Features
 
@@ -62,6 +62,20 @@ Publish the config to customise the allowed domains and deliverability wiring:
 php artisan vendor:publish --tag=laravel-email-verification-config
 ```
 
+The translations can be published as well, if you want to override the failure
+messages:
+
+```bash
+php artisan vendor:publish --tag=laravel-email-verification-translations
+```
+
+An install command is also available, which publishes the config and walks you
+through setup:
+
+```bash
+php artisan laravel-email-verification:install
+```
+
 Each driver package publishes its own config under a matching tag, e.g.:
 
 ```bash
@@ -95,15 +109,12 @@ new EmailValidation('bouncer');   // this rule only, regardless of the default
 `config/laravel-email-verification.php`:
 
 - `default` — the deliverability driver name (`EMAIL_VERIFIER_DRIVER`). The core package provides only `null`; installing a driver package makes its driver name (`emailable`, `bouncer`) available here.
-
-Add the domain allow-list to `config/services.php`. Leave it empty to allow any domain:
+- `allowed_domains` — the domains the rule accepts. Comparison is case-insensitive. Leave the list empty to allow any domain.
 
 ```php
-'email_validation' => [
-    'allowed_domains' => [
-        'example.com',
-        'example.org',
-    ],
+'allowed_domains' => [
+    'example.com',
+    'example.org',
 ],
 ```
 
@@ -112,13 +123,22 @@ Add the domain allow-list to `config/services.php`. Leave it empty to allow any 
 ```php
 use Misaf\LaravelEmailVerification\Rules\EmailValidation;
 
-TextInput::make('email')
-    ->email()
-    ->rules([
+$request->validate([
+    'email' => [
         'bail',
         'email:rfc,strict,spoof,filter,filter_unicode',
         new EmailValidation(),
-    ]);
+    ],
+]);
+```
+
+The rule is a plain `ValidationRule`, so it works anywhere Laravel accepts one
+— form requests, `Validator::make()`, Filament fields, and so on:
+
+```php
+TextInput::make('email')
+    ->email()
+    ->rules(['bail', new EmailValidation()]);
 ```
 
 `new EmailValidation()` uses the configured default driver. Pass a driver name to override per use: `new EmailValidation('bouncer')`.
@@ -162,8 +182,9 @@ app(EmailVerifierManager::class)->extend('my-provider', fn (): EmailVerifierCont
 ## Testing
 
 ```bash
-composer test
-composer analyse
+composer test       # Pest
+composer analyse    # PHPStan / Larastan
+composer format     # Pint
 ```
 
 ## License

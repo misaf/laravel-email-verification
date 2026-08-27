@@ -39,7 +39,7 @@ final class BouncerServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        AboutCommand::add('Laravel Email Validation Bouncer', fn(): array => [
+        AboutCommand::add('Laravel Email Verification Bouncer', fn(): array => [
             'Version' => InstalledVersions::getPrettyVersion('misaf/laravel-email-verification-bouncer'),
         ]);
     }

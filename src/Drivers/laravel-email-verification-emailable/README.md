@@ -1,4 +1,4 @@
-# Laravel Email Validation — Emailable Driver
+# Laravel Email Verification — Emailable Driver
 
 An [Emailable](https://emailable.com) deliverability driver for
 [`misaf/laravel-email-verification`](https://github.com/misaf/laravel-email-verification).
@@ -37,6 +37,13 @@ Publish the config to override credentials:
 php artisan vendor:publish --tag=laravel-email-verification-emailable-config
 ```
 
+An install command is also available, which publishes the config and walks you
+through setup:
+
+```bash
+php artisan laravel-email-verification-emailable:install
+```
+
 ## Configuration
 
 `config/laravel-email-verification-emailable.php`:
@@ -58,7 +65,21 @@ The credentials remain separate from the provider-neutral core configuration.
 Malformed payloads, unsuccessful HTTP responses, timeouts, and exceptions also
 produce `Unverifiable`. They are never treated as deliverable.
 
-## Direct Usage
+## Usage
+
+Once `EMAIL_VERIFIER_DRIVER` points at `emailable`, the core `EmailValidation` rule
+uses this driver with no further changes. To use it for a single rule
+regardless of the configured default:
+
+```php
+use Misaf\LaravelEmailVerification\Rules\EmailValidation;
+
+$request->validate([
+    'email' => ['bail', 'email:rfc,strict', new EmailValidation('emailable')],
+]);
+```
+
+### Verifying an address directly
 
 ```php
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;

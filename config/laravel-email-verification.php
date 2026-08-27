@@ -19,4 +19,18 @@ return [
 
     'default' => env('EMAIL_VERIFIER_DRIVER', 'null'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed Domains
+    |--------------------------------------------------------------------------
+    |
+    | The domains the EmailValidation rule accepts. Comparison is
+    | case-insensitive. Leave the list empty to impose no domain restriction.
+    |
+    */
+
+    'allowed_domains' => [
+
+    ],
+
 ];

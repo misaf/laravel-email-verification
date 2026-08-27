@@ -1,4 +1,4 @@
-# Laravel Email Validation — Bouncer Driver
+# Laravel Email Verification — Bouncer Driver
 
 A [Bouncer](https://usebouncer.com) deliverability driver for
 [`misaf/laravel-email-verification`](https://github.com/misaf/laravel-email-verification).
@@ -39,6 +39,13 @@ Publish the config to override credentials:
 php artisan vendor:publish --tag=laravel-email-verification-bouncer-config
 ```
 
+An install command is also available, which publishes the config and walks you
+through setup:
+
+```bash
+php artisan laravel-email-verification-bouncer:install
+```
+
 ## Configuration
 
 `config/laravel-email-verification-bouncer.php`:
@@ -61,7 +68,21 @@ Malformed payloads, unsuccessful HTTP responses (including 402 no-credits and
 429 rate-limit responses), timeouts, and exceptions also produce
 `Unverifiable`. They are never treated as deliverable.
 
-## Direct Usage
+## Usage
+
+Once `EMAIL_VERIFIER_DRIVER` points at `bouncer`, the core `EmailValidation` rule
+uses this driver with no further changes. To use it for a single rule
+regardless of the configured default:
+
+```php
+use Misaf\LaravelEmailVerification\Rules\EmailValidation;
+
+$request->validate([
+    'email' => ['bail', 'email:rfc,strict', new EmailValidation('bouncer')],
+]);
+```
+
+### Verifying an address directly
 
 ```php
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;

@@ -3,7 +3,7 @@ name: laravel-email-verification-emailable-development
 description: "Create, modify, review, or test the optional Emailable driver in the package root. Trigger for EmailableEmailVerifier, EmailableServiceProvider, Emailable API configuration, email-verification response mapping, HTTP retries or timeouts, and Emailable driver tests."
 ---
 
-# Laravel Email Validation Emailable
+# Laravel Email Verification Emailable
 
 ## Workflow
 

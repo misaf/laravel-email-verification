@@ -3,7 +3,7 @@ name: laravel-email-verification-bouncer-development
 description: "Create, modify, review, or test the optional Bouncer driver in the package root. Trigger for BouncerEmailVerifier, BouncerServiceProvider, Bouncer API configuration, email-verification response mapping, HTTP retries or timeouts, and Bouncer driver tests."
 ---
 
-# Laravel Email Validation Bouncer
+# Laravel Email Verification Bouncer
 
 ## Workflow
 
