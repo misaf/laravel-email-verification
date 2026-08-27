@@ -6,7 +6,7 @@ driver packages are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.6.0 - 2026-08-27
+## 1.0.0 - 2026-08-27
 
 ### Changed
 
@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking.** `Misaf\LaravelEmailValidation\Verifiers` is renamed to `Misaf\LaravelEmailVerification\Drivers`, and the monorepo directory `src/Verifiers` to `src/Drivers`.
 - **Breaking.** `EmailValidationServiceProvider` is renamed to `EmailVerificationServiceProvider`.
 - **Breaking.** The published config files are renamed to `laravel-email-verification.php`, `laravel-email-verification-bouncer.php`, and `laravel-email-verification-emailable.php`, along with their `vendor:publish` tags and every `config()` key.
+
+---
+
+# Pre-rename history
+
+The entries below belong to `misaf/laravel-email-validation`, the package this
+one was renamed from. Its tags and releases were removed when version numbering
+restarted at 1.0.0.
 
 ## 1.4.1 - 2026-08-22
 
