@@ -1,14 +1,18 @@
 {
     "name": "misaf/laravel-email-verification-emailable",
-    "description": "Emailable deliverability driver for Laravel email verification",
+    "description": "Emailable email verification driver for Laravel.",
     "license": "MIT",
     "type": "library",
     "keywords": [
         "laravel",
-        "misaf",
+        "laravel-package",
         "email",
-        "validation",
-        "emailable"
+        "email-verification",
+        "email-validation",
+        "email-provider",
+        "email-driver",
+        "emailable",
+        "emailable-email"
     ],
     "authors": [
         {

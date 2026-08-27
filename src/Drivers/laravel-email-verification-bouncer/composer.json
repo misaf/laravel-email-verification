@@ -1,14 +1,18 @@
 {
     "name": "misaf/laravel-email-verification-bouncer",
-    "description": "Bouncer deliverability driver for Laravel email verification",
+    "description": "Bouncer email verification driver for Laravel.",
     "license": "MIT",
     "type": "library",
     "keywords": [
         "laravel",
-        "misaf",
+        "laravel-package",
         "email",
-        "validation",
-        "bouncer"
+        "email-verification",
+        "email-validation",
+        "email-provider",
+        "email-driver",
+        "bouncer",
+        "bouncer-email"
     ],
     "authors": [
         {

@@ -1,14 +1,19 @@
 {
     "name": "misaf/laravel-email-verification",
-    "description": "Provider-neutral email domain and deliverability validation for Laravel applications",
+    "description": "Driver-based email verification manager for Laravel.",
     "license": "MIT",
     "type": "library",
     "keywords": [
         "laravel",
-        "misaf",
+        "laravel-package",
         "email",
+        "email-verification",
+        "email-validation",
+        "email-provider",
+        "email-driver",
+        "deliverability",
         "validation",
-        "deliverability"
+        "verification"
     ],
     "authors": [
         {
