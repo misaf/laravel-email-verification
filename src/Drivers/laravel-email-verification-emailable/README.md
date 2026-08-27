@@ -6,9 +6,11 @@ An [Emailable](https://emailable.com) deliverability driver for
 ## Features
 
 - Registers the `emailable` verifier driver with the core manager
-- Bounded HTTP timeout and retry behavior
-- Explicit mapping for Emailable verification states
-- Safe unverifiable results for provider failures and unexpected responses
+- Uses Emailable's verification API (`GET /v1/verify`)
+- 6-second HTTP timeout, so a slow verification comes back as a clean result instead of hanging the request
+- Retries only connection failures and 5xx responses — a 4xx, including a 429 rate limit, is never retried, so paid API quota is not burned on an answer that cannot change
+- Explicit mapping for every Emailable verification state
+- Safe unverifiable results for provider failures, malformed payloads, timeouts, and unexpected responses
 
 ## Requirements
 
