@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Misaf\LaravelEmailValidation\Tests\TestCase;
+use Misaf\LaravelEmailVerification\Tests\TestCase;
 
 pest()->extend(TestCase::class)->in(
     'Feature',
-    '../src/Verifiers/*/tests/Feature',
+    '../src/Drivers/*/tests/Feature',
 );

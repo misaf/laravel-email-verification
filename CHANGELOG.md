@@ -1,17 +1,27 @@
 # Changelog
 
-All notable changes to `misaf/laravel-email-validation` and its first-party
+All notable changes to `misaf/laravel-email-verification` and its first-party
 driver packages are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## 1.6.0 - 2026-08-27
+
+### Changed
+
+- **Breaking.** The package is renamed from `misaf/laravel-email-validation` to `misaf/laravel-email-verification`, and the driver packages from `misaf/laravel-email-validation-{bouncer,emailable}` to `misaf/laravel-email-verification-{bouncer,emailable}`.
+- **Breaking.** The root namespace is renamed from `Misaf\LaravelEmailValidation` to `Misaf\LaravelEmailVerification` (and `…Bouncer` / `…Emailable` for the drivers).
+- **Breaking.** `Misaf\LaravelEmailValidation\Verifiers` is renamed to `Misaf\LaravelEmailVerification\Drivers`, and the monorepo directory `src/Verifiers` to `src/Drivers`.
+- **Breaking.** `EmailValidationServiceProvider` is renamed to `EmailVerificationServiceProvider`.
+- **Breaking.** The published config files are renamed to `laravel-email-verification.php`, `laravel-email-verification-bouncer.php`, and `laravel-email-verification-emailable.php`, along with their `vendor:publish` tags and every `config()` key.
 
 ## 1.4.1 - 2026-08-22
 
 ### Added
 
 - `EmailValidation` now rejects non-string input with a localized message via the new `validation.email.invalid` key (en, de, fa).
-- The core package suggests `misaf/laravel-email-validation-bouncer` and `misaf/laravel-email-validation-emailable`, so the first-party drivers are discoverable on install.
+- The core package suggests `misaf/laravel-email-verification-bouncer` and `misaf/laravel-email-verification-emailable`, so the first-party drivers are discoverable on install.
 - Feature coverage for both first-party drivers installed side by side: independent resolution from one manager, per-rule driver selection, and `default` selection.
 - README documentation for the install paths (core alone, core plus one driver, core plus both) and for running both drivers together.
 
@@ -35,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Point the package split workflow's `package_directory` at `src/Verifiers`.
+- Point the package split workflow's `package_directory` at `src/Drivers`.
 
 ## 1.0.0 - 2026-07-26
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Misaf\LaravelEmailValidation\Facades;
+namespace Misaf\LaravelEmailVerification\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Misaf\LaravelEmailValidation\EmailVerifierManager;
+use Misaf\LaravelEmailVerification\EmailVerifierManager;
 
 /**
- * @method static \Misaf\LaravelEmailValidation\Contracts\EmailVerifier driver(string|null $driver = null)
- * @method static \Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus verify(string $email)
+ * @method static \Misaf\LaravelEmailVerification\Contracts\EmailVerifier driver(string|null $driver = null)
+ * @method static \Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus verify(string $email)
  *
  * @see EmailVerifierManager
  */

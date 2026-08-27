@@ -1,5 +1,5 @@
 {
-    "name": "misaf/laravel-email-validation",
+    "name": "misaf/laravel-email-verification",
     "description": "Provider-neutral email domain and deliverability validation for Laravel applications",
     "license": "MIT",
     "type": "library",
@@ -17,10 +17,10 @@
             "role": "Developer"
         }
     ],
-    "homepage": "https://github.com/misaf/laravel-email-validation",
+    "homepage": "https://github.com/misaf/laravel-email-verification",
     "support": {
-        "issues": "https://github.com/misaf/laravel-email-validation/issues",
-        "source": "https://github.com/misaf/laravel-email-validation"
+        "issues": "https://github.com/misaf/laravel-email-verification/issues",
+        "source": "https://github.com/misaf/laravel-email-verification"
     },
     "require": {
         "php": "^8.4",
@@ -46,21 +46,21 @@
         "phpstan/extension-installer": "^1.4"
     },
     "suggest": {
-        "misaf/laravel-email-validation-bouncer": "Adds the \"bouncer\" deliverability driver, backed by the Bouncer API (https://usebouncer.com)",
-        "misaf/laravel-email-validation-emailable": "Adds the \"emailable\" deliverability driver, backed by the Emailable API (https://emailable.com)"
+        "misaf/laravel-email-verification-bouncer": "Adds the \"bouncer\" deliverability driver, backed by the Bouncer API (https://usebouncer.com)",
+        "misaf/laravel-email-verification-emailable": "Adds the \"emailable\" deliverability driver, backed by the Emailable API (https://emailable.com)"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Misaf\\LaravelEmailValidation\\": "src/"
+            "Misaf\\LaravelEmailVerification\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Misaf\\LaravelEmailValidation\\Tests\\": "tests/",
-            "Misaf\\LaravelEmailValidationBouncer\\": "src/Verifiers/laravel-email-validation-bouncer/src/",
-            "Misaf\\LaravelEmailValidationEmailable\\": "src/Verifiers/laravel-email-validation-emailable/src/"
+            "Misaf\\LaravelEmailVerification\\Tests\\": "tests/",
+            "Misaf\\LaravelEmailVerificationBouncer\\": "src/Drivers/laravel-email-verification-bouncer/src/",
+            "Misaf\\LaravelEmailVerificationEmailable\\": "src/Drivers/laravel-email-verification-emailable/src/"
         }
     },
     "config": {
@@ -76,7 +76,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Misaf\\LaravelEmailValidation\\Providers\\EmailValidationServiceProvider"
+                "Misaf\\LaravelEmailVerification\\Providers\\EmailVerificationServiceProvider"
             ]
         }
     },

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Laravel Email Validation"
+  short_description: "Develop provider-neutral Laravel email validation"
+  default_prompt: "Use $laravel-email-verification-development to implement or review Laravel email validation behavior."

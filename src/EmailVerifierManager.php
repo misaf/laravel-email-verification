@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Misaf\LaravelEmailValidation;
+namespace Misaf\LaravelEmailVerification;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Manager;
 use LogicException;
-use Misaf\LaravelEmailValidation\Contracts\EmailVerifier;
-use Misaf\LaravelEmailValidation\Verifiers\NullEmailVerifier;
+use Misaf\LaravelEmailVerification\Contracts\EmailVerifier;
+use Misaf\LaravelEmailVerification\Drivers\NullEmailVerifier;
 
 /**
  * Resolves deliverability verifiers. The core package ships only the "null"
  * driver; concrete provider drivers register themselves via {@see extend()}
  * from their own packages.
  *
- * @method \Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus verify(string $email)
+ * @method \Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus verify(string $email)
  */
 final class EmailVerifierManager extends Manager
 {
     public function getDefaultDriver(): string
     {
-        return Config::string('laravel-email-validation.default', 'null');
+        return Config::string('laravel-email-verification.default', 'null');
     }
 
     public function verifier(?string $driver = null): EmailVerifier

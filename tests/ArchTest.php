@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Misaf\LaravelEmailValidation\EmailVerifierManager;
+use Misaf\LaravelEmailVerification\EmailVerifierManager;
 
 arch()->preset()->php();
 arch()->preset()->security();
@@ -10,15 +10,15 @@ arch()->preset()->laravel();
 
 arch('the core remains provider neutral')
     ->expect([
-        'Misaf\LaravelEmailValidation\Contracts',
-        'Misaf\LaravelEmailValidation\Enums',
-        'Misaf\LaravelEmailValidation\Facades',
-        'Misaf\LaravelEmailValidation\Providers',
-        'Misaf\LaravelEmailValidation\Rules',
-        'Misaf\LaravelEmailValidation\Verifiers',
+        'Misaf\LaravelEmailVerification\Contracts',
+        'Misaf\LaravelEmailVerification\Enums',
+        'Misaf\LaravelEmailVerification\Facades',
+        'Misaf\LaravelEmailVerification\Providers',
+        'Misaf\LaravelEmailVerification\Rules',
+        'Misaf\LaravelEmailVerification\Drivers',
         EmailVerifierManager::class,
     ])
     ->not->toUse([
-        'Misaf\LaravelEmailValidationBouncer',
-        'Misaf\LaravelEmailValidationEmailable',
+        'Misaf\LaravelEmailVerificationBouncer',
+        'Misaf\LaravelEmailVerificationEmailable',
     ]);

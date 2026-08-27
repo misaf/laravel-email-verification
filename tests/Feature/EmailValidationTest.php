@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Misaf\LaravelEmailValidation\Contracts\EmailVerifier;
-use Misaf\LaravelEmailValidation\EmailVerifierManager;
-use Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus;
-use Misaf\LaravelEmailValidation\Rules\EmailValidation;
+use Misaf\LaravelEmailVerification\Contracts\EmailVerifier;
+use Misaf\LaravelEmailVerification\EmailVerifierManager;
+use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
+use Misaf\LaravelEmailVerification\Rules\EmailValidation;
 
 /**
  * @return list<string>
@@ -20,12 +20,12 @@ function emailValidationFailures(mixed $email, ?string $verifier = null): array
 
 beforeEach(function (): void {
     config(['services.email_validation.allowed_domains' => ['example.com']]);
-    config(['laravel-email-validation.default' => 'null']);
+    config(['laravel-email-verification.default' => 'null']);
 });
 
 it('rejects a non-string value with a translated message', function (): void {
     expect(emailValidationFailures(['user@example.com']))
-        ->toBe([__('laravel-email-validation::validation.email.invalid')]);
+        ->toBe([__('laravel-email-verification::validation.email.invalid')]);
 });
 
 it('matches an allowed domain against a mixed-case address', function (): void {
@@ -78,5 +78,5 @@ it('rejects an address reported as unverifiable with a service unavailable messa
     );
 
     expect(emailValidationFailures('user@example.com', 'always-unverifiable'))
-        ->toBe([__('laravel-email-validation::validation.email.service_unavailable')]);
+        ->toBe([__('laravel-email-verification::validation.email.service_unavailable')]);
 });

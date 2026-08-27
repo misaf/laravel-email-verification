@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Misaf\LaravelEmailValidation\Enums;
+namespace Misaf\LaravelEmailVerification\Enums;
 
 enum EmailVerificationStatus
 {

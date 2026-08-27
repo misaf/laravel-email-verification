@@ -1,10 +1,10 @@
 ## Laravel Email Validation
 
-The `misaf/laravel-email-validation` package provides provider-neutral email-domain and deliverability validation for Laravel applications.
+The `misaf/laravel-email-verification` package provides provider-neutral email-domain and deliverability validation for Laravel applications.
 
 ### Standards
 
-- Keep core code inside `the package root` using the `Misaf\LaravelEmailValidation` namespace.
+- Keep core code inside `the package root` using the `Misaf\LaravelEmailVerification` namespace.
 - This package owns `EmailVerifier`, `EmailVerifierManager`, `EmailVerificationStatus`, the `EmailVerifier` facade, `EmailValidation`, and `NullEmailVerifier`.
 - Keep the core package standalone. Never import a concrete verification provider, another domain module, .
 - Provider packages depend on this package and register drivers through `EmailVerifierManager::extend()`; the dependency must never point from core to provider.
@@ -13,4 +13,4 @@ The `misaf/laravel-email-validation` package provides provider-neutral email-dom
 - An empty `services.email_validation.allowed_domains` list imposes no domain restriction. Use Laravel's syntax-oriented email rule before `EmailValidation`.
 - Keep the `en`, `de`, and `fa` validation translation keys synchronized.
 - Keep focused Pest coverage for domain restrictions, mixed input, driver registration, and every validation status.
-- Keep the architecture presets plus `arch()->expect('Misaf\LaravelEmailValidation')->not->toUse([...])`.
+- Keep the architecture presets plus `arch()->expect('Misaf\LaravelEmailVerification')->not->toUse([...])`.

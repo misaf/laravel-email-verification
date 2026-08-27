@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Misaf\LaravelEmailValidation\Rules;
+namespace Misaf\LaravelEmailVerification\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Illuminate\Translation\PotentiallyTranslatedString;
-use Misaf\LaravelEmailValidation\EmailVerifierManager;
-use Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus;
+use Misaf\LaravelEmailVerification\EmailVerifierManager;
+use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 
 final class EmailValidation implements ValidationRule
 {
@@ -25,7 +25,7 @@ final class EmailValidation implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if ( ! is_string($value)) {
-            $fail(__('laravel-email-validation::validation.email.invalid'));
+            $fail(__('laravel-email-verification::validation.email.invalid'));
 
             return;
         }
@@ -34,7 +34,7 @@ final class EmailValidation implements ValidationRule
         $domain = $this->getEmailHost($value);
 
         if ( ! $this->isAllowedDomain($domain, $allowedDomains)) {
-            $fail(__('laravel-email-validation::validation.email.domain_not_allowed', [
+            $fail(__('laravel-email-verification::validation.email.domain_not_allowed', [
                 'domain' => $domain,
             ]));
 
@@ -45,9 +45,9 @@ final class EmailValidation implements ValidationRule
 
         match ($status) {
             EmailVerificationStatus::Deliverable   => null,
-            EmailVerificationStatus::Undeliverable => $fail(__('laravel-email-validation::validation.email.undeliverable')),
-            EmailVerificationStatus::Risky         => $fail(__('laravel-email-validation::validation.email.risky')),
-            EmailVerificationStatus::Unverifiable  => $fail(__('laravel-email-validation::validation.email.service_unavailable')),
+            EmailVerificationStatus::Undeliverable => $fail(__('laravel-email-verification::validation.email.undeliverable')),
+            EmailVerificationStatus::Risky         => $fail(__('laravel-email-verification::validation.email.risky')),
+            EmailVerificationStatus::Unverifiable  => $fail(__('laravel-email-verification::validation.email.service_unavailable')),
         };
     }
 

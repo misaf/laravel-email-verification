@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Misaf\LaravelEmailValidation\Contracts;
+namespace Misaf\LaravelEmailVerification\Contracts;
 
-use Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus;
+use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 
 interface EmailVerifier
 {

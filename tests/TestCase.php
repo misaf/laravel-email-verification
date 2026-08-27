@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Misaf\LaravelEmailValidation\Tests;
+namespace Misaf\LaravelEmailVerification\Tests;
 
 use Illuminate\Foundation\Application;
-use Misaf\LaravelEmailValidation\Providers\EmailValidationServiceProvider;
-use Misaf\LaravelEmailValidationBouncer\Providers\BouncerServiceProvider;
-use Misaf\LaravelEmailValidationEmailable\Providers\EmailableServiceProvider;
+use Misaf\LaravelEmailVerification\Providers\EmailVerificationServiceProvider;
+use Misaf\LaravelEmailVerificationBouncer\Providers\BouncerServiceProvider;
+use Misaf\LaravelEmailVerificationEmailable\Providers\EmailableServiceProvider;
 use Orchestra\Testbench\TestCase as TestbenchTestCase;
 
 abstract class TestCase extends TestbenchTestCase
@@ -19,7 +19,7 @@ abstract class TestCase extends TestbenchTestCase
     protected function getPackageProviders($app): array
     {
         return [
-            EmailValidationServiceProvider::class,
+            EmailVerificationServiceProvider::class,
             BouncerServiceProvider::class,
             EmailableServiceProvider::class,
         ];

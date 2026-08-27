@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use Misaf\LaravelEmailValidation\Contracts\EmailVerifier;
-use Misaf\LaravelEmailValidation\EmailVerifierManager;
-use Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus;
-use Misaf\LaravelEmailValidation\Rules\EmailValidation;
-use Misaf\LaravelEmailValidation\Verifiers\NullEmailVerifier;
+use Misaf\LaravelEmailVerification\Contracts\EmailVerifier;
+use Misaf\LaravelEmailVerification\Drivers\NullEmailVerifier;
+use Misaf\LaravelEmailVerification\EmailVerifierManager;
+use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
+use Misaf\LaravelEmailVerification\Rules\EmailValidation;
 
 function manager(): EmailVerifierManager
 {
@@ -14,14 +14,14 @@ function manager(): EmailVerifierManager
 }
 
 it('resolves the null driver as the default', function (): void {
-    config(['laravel-email-validation.default' => 'null']);
+    config(['laravel-email-verification.default' => 'null']);
 
     expect(manager()->driver())->toBeInstanceOf(NullEmailVerifier::class)
         ->and(manager()->driver()->verify('user@example.com'))->toBe(EmailVerificationStatus::Deliverable);
 });
 
 it('falls back to the null driver when the package config is missing', function (): void {
-    config(['laravel-email-validation' => []]);
+    config(['laravel-email-verification' => []]);
 
     expect(manager()->driver())->toBeInstanceOf(NullEmailVerifier::class);
 });
@@ -47,7 +47,7 @@ it('resolves a registered driver as the configured default', function (): void {
             return EmailVerificationStatus::Risky;
         }
     });
-    config(['laravel-email-validation.default' => 'custom-default']);
+    config(['laravel-email-verification.default' => 'custom-default']);
 
     expect($manager->driver()->verify('user@example.com'))
         ->toBe(EmailVerificationStatus::Risky);

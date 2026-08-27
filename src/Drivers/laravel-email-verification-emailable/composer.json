@@ -1,0 +1,52 @@
+{
+    "name": "misaf/laravel-email-verification-emailable",
+    "description": "Emailable deliverability driver for Laravel email verification",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "misaf",
+        "email",
+        "validation",
+        "emailable"
+    ],
+    "authors": [
+        {
+            "name": "Ehsan Mahmoodi",
+            "email": "misaf.1990@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/misaf/laravel-email-verification-emailable",
+    "support": {
+        "issues": "https://github.com/misaf/laravel-email-verification-emailable/issues",
+        "source": "https://github.com/misaf/laravel-email-verification-emailable"
+    },
+    "require": {
+        "php": "^8.4",
+        "illuminate/http": "^13.0",
+        "illuminate/support": "^13.0",
+        "misaf/laravel-email-verification": "^1.0",
+        "spatie/laravel-package-tools": "^1.93"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Misaf\\LaravelEmailVerificationEmailable\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Misaf\\LaravelEmailVerificationEmailable\\Providers\\EmailableServiceProvider"
+            ]
+        }
+    },
+    "$schema": "https://getcomposer.org/schema.json"
+}

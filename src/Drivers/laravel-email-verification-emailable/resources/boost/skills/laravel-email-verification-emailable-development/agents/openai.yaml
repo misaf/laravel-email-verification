@@ -1,0 +1,4 @@
+interface:
+  display_name: "Laravel Emailable Driver"
+  short_description: "Develop the Laravel Emailable verification driver"
+  default_prompt: "Use $laravel-email-verification-emailable-development to implement or review the Laravel Emailable driver."

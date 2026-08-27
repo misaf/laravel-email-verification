@@ -27,7 +27,7 @@ The core depends only on framework packages, so it can be reused by any Laravel 
 The core package is required in every case:
 
 ```bash
-composer require misaf/laravel-email-validation
+composer require misaf/laravel-email-verification
 ```
 
 On its own this gives you the domain allow-list plus the `null` driver, which
@@ -40,18 +40,18 @@ To actually verify deliverability, add one or both driver packages. They are
 independent of each other and can be installed together:
 
 ```bash
-composer require misaf/laravel-email-validation-emailable
-composer require misaf/laravel-email-validation-bouncer
+composer require misaf/laravel-email-verification-emailable
+composer require misaf/laravel-email-verification-bouncer
 ```
 
 | Package | Driver name | Provider | Config file |
 | --- | --- | --- | --- |
-| *(core)* | `null` | none — always `Deliverable` | `laravel-email-validation.php` |
-| `misaf/laravel-email-validation-emailable` | `emailable` | [Emailable](https://emailable.com) | `laravel-email-validation-emailable.php` |
-| `misaf/laravel-email-validation-bouncer` | `bouncer` | [Bouncer](https://usebouncer.com) | `laravel-email-validation-bouncer.php` |
+| *(core)* | `null` | none — always `Deliverable` | `laravel-email-verification.php` |
+| `misaf/laravel-email-verification-emailable` | `emailable` | [Emailable](https://emailable.com) | `laravel-email-verification-emailable.php` |
+| `misaf/laravel-email-verification-bouncer` | `bouncer` | [Bouncer](https://usebouncer.com) | `laravel-email-verification-bouncer.php` |
 
 Each driver package requires the core and is listed under the core's composer
-`suggest`, so `composer require misaf/laravel-email-validation` will prompt you
+`suggest`, so `composer require misaf/laravel-email-verification` will prompt you
 with what is available.
 
 All service providers are auto-registered.
@@ -59,14 +59,14 @@ All service providers are auto-registered.
 Publish the config to customise the allowed domains and deliverability wiring:
 
 ```bash
-php artisan vendor:publish --tag=laravel-email-validation-config
+php artisan vendor:publish --tag=laravel-email-verification-config
 ```
 
 Each driver package publishes its own config under a matching tag, e.g.:
 
 ```bash
-php artisan vendor:publish --tag=laravel-email-validation-emailable-config
-php artisan vendor:publish --tag=laravel-email-validation-bouncer-config
+php artisan vendor:publish --tag=laravel-email-verification-emailable-config
+php artisan vendor:publish --tag=laravel-email-verification-bouncer-config
 ```
 
 ### Using both drivers together
@@ -92,7 +92,7 @@ new EmailValidation('bouncer');   // this rule only, regardless of the default
 
 ## Configuration
 
-`config/laravel-email-validation.php`:
+`config/laravel-email-verification.php`:
 
 - `default` — the deliverability driver name (`EMAIL_VERIFIER_DRIVER`). The core package provides only `null`; installing a driver package makes its driver name (`emailable`, `bouncer`) available here.
 
@@ -110,7 +110,7 @@ Add the domain allow-list to `config/services.php`. Leave it empty to allow any 
 ## Usage
 
 ```php
-use Misaf\LaravelEmailValidation\Rules\EmailValidation;
+use Misaf\LaravelEmailVerification\Rules\EmailValidation;
 
 TextInput::make('email')
     ->email()
@@ -139,8 +139,8 @@ reported as deliverable by concrete drivers.
 ### Verifying an address directly
 
 ```php
-use Misaf\LaravelEmailValidation\Facades\EmailVerifier;
-use Misaf\LaravelEmailValidation\Enums\EmailVerificationStatus;
+use Misaf\LaravelEmailVerification\Facades\EmailVerifier;
+use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 
 $status = EmailVerifier::verify('user@example.com');           // default driver
 $status = EmailVerifier::driver('bouncer')->verify($email);   // specific driver
@@ -153,8 +153,8 @@ if ($status === EmailVerificationStatus::Deliverable) {
 ### Registering a custom driver
 
 ```php
-use Misaf\LaravelEmailValidation\Contracts\EmailVerifier as EmailVerifierContract;
-use Misaf\LaravelEmailValidation\EmailVerifierManager;
+use Misaf\LaravelEmailVerification\Contracts\EmailVerifier as EmailVerifierContract;
+use Misaf\LaravelEmailVerification\EmailVerifierManager;
 
 app(EmailVerifierManager::class)->extend('my-provider', fn (): EmailVerifierContract => new MyProviderVerifier());
 ```
