@@ -44,16 +44,25 @@ it('rejects a non-string configured domain', function (): void {
     emailValidationFailures('user@example.com');
 })->throws(
     InvalidArgumentException::class,
-    'The laravel-email-verification.allowed_domains value at key [1] must be a non-empty string.',
+    'The laravel-email-verification.allowed_domains value at key [1] must be a non-empty string without surrounding whitespace.',
 );
 
 it('rejects an empty configured domain', function (): void {
-    config(['laravel-email-verification.allowed_domains' => [' ']]);
+    config(['laravel-email-verification.allowed_domains' => ['']]);
 
     emailValidationFailures('user@example.com');
 })->throws(
     InvalidArgumentException::class,
-    'The laravel-email-verification.allowed_domains value at key [0] must be a non-empty string.',
+    'The laravel-email-verification.allowed_domains value at key [0] must be a non-empty string without surrounding whitespace.',
+);
+
+it('rejects a configured domain with surrounding whitespace', function (): void {
+    config(['laravel-email-verification.allowed_domains' => [' example.com ']]);
+
+    emailValidationFailures('user@example.com');
+})->throws(
+    InvalidArgumentException::class,
+    'The laravel-email-verification.allowed_domains value at key [0] must be a non-empty string without surrounding whitespace.',
 );
 
 it('rejects a disallowed domain', function (): void {

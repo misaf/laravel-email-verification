@@ -75,9 +75,9 @@ final class EmailValidation implements ValidationRule
         $allowedDomains = Config::array('laravel-email-verification.allowed_domains', []);
 
         foreach ($allowedDomains as $key => $domain) {
-            if ( ! is_string($domain) || '' === mb_trim($domain)) {
+            if ( ! is_string($domain) || '' === $domain || mb_trim($domain) !== $domain) {
                 throw new InvalidArgumentException(
-                    sprintf('The laravel-email-verification.allowed_domains value at key [%s] must be a non-empty string.', $key),
+                    sprintf('The laravel-email-verification.allowed_domains value at key [%s] must be a non-empty string without surrounding whitespace.', $key),
                 );
             }
 
