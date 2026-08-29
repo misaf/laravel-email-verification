@@ -15,7 +15,9 @@ performs no external check. Real deliverability verification comes from driver
 packages that register themselves via the manager's `extend`. Install the
 driver(s) you want — one, both, or none.
 
-The core depends only on framework packages, so it can be reused by any Laravel application without pulling in a wider ecosystem.
+The core has no email-provider SDK dependencies. It uses Laravel components and
+Spatie Laravel Package Tools for package registration, so it can be reused by
+any Laravel application without pulling in a provider-specific ecosystem.
 
 ## Requirements
 
@@ -109,7 +111,10 @@ new EmailValidation('bouncer');   // this rule only, regardless of the default
 `config/laravel-email-verification.php`:
 
 - `default` — the deliverability driver name (`EMAIL_VERIFICATION_DRIVER`). The core package provides only `null`; installing a driver package makes its driver name (`emailable`, `bouncer`) available here.
-- `allowed_domains` — the domains the rule accepts. Comparison is case-insensitive. Leave the list empty to allow any domain.
+- `allowed_domains` — the domains the rule accepts. Comparison is
+  case-insensitive. Every entry must be a non-empty string without surrounding
+  whitespace; invalid configuration throws an `InvalidArgumentException`.
+  Leave the list empty to allow any domain.
 
 ```php
 'allowed_domains' => [
