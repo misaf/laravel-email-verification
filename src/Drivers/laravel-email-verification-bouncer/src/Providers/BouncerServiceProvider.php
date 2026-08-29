@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Misaf\LaravelEmailVerificationBouncer\Providers;
 
-use Composer\InstalledVersions;
-use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Config;
 use Misaf\LaravelEmailVerification\Contracts\EmailVerification;
 use Misaf\LaravelEmailVerification\EmailVerificationManager;
@@ -37,10 +35,4 @@ final class BouncerServiceProvider extends PackageServiceProvider
         );
     }
 
-    public function packageBooted(): void
-    {
-        AboutCommand::add('Laravel Email Verification Bouncer', fn(): array => [
-            'Version' => InstalledVersions::getPrettyVersion('misaf/laravel-email-verification-bouncer'),
-        ]);
-    }
 }

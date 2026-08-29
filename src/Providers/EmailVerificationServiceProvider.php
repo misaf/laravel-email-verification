@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Misaf\LaravelEmailVerification\Providers;
 
-use Composer\InstalledVersions;
 use Illuminate\Contracts\Container\Container as Application;
-use Illuminate\Foundation\Console\AboutCommand;
 use Misaf\LaravelEmailVerification\EmailVerificationManager;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -35,10 +33,4 @@ final class EmailVerificationServiceProvider extends PackageServiceProvider
         $this->app->alias(EmailVerificationManager::class, 'email-verification');
     }
 
-    public function packageBooted(): void
-    {
-        AboutCommand::add('Laravel Email Verification', fn(): array => [
-            'Version' => InstalledVersions::getPrettyVersion('misaf/laravel-email-verification'),
-        ]);
-    }
 }
