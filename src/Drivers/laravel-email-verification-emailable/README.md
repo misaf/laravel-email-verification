@@ -5,7 +5,7 @@ An [Emailable](https://emailable.com) deliverability driver for
 
 ## Features
 
-- Registers the `emailable` verifier driver with the core manager
+- Registers the `emailable` driver with the core manager
 - Uses Emailable's verification API (`GET /v1/verify`)
 - 6-second HTTP timeout, so a slow verification comes back as a clean result instead of hanging the request
 - Retries only connection failures and 5xx responses — a 4xx, including a 429 rate limit, is never retried, so paid API quota is not burned on an answer that cannot change
@@ -25,10 +25,10 @@ composer require misaf/laravel-email-verification-emailable
 ```
 
 The service provider auto-registers and adds an `emailable` driver to the
-email verifier manager. Point the core package at it:
+email verification manager. Point the core package at it:
 
 ```env
-EMAIL_VERIFIER_DRIVER=emailable
+EMAIL_VERIFICATION_DRIVER=emailable
 EMAILABLE_HOST=https://api.emailable.com/v1/verify
 EMAILABLE_API_KEY=your-key
 ```
@@ -69,7 +69,7 @@ produce `Unverifiable`. They are never treated as deliverable.
 
 ## Usage
 
-Once `EMAIL_VERIFIER_DRIVER` points at `emailable`, the core `EmailValidation` rule
+Once `EMAIL_VERIFICATION_DRIVER` points at `emailable`, the core `EmailValidation` rule
 uses this driver with no further changes. To use it for a single rule
 regardless of the configured default:
 
@@ -85,9 +85,9 @@ $request->validate([
 
 ```php
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
-use Misaf\LaravelEmailVerification\Facades\EmailVerifier;
+use Misaf\LaravelEmailVerification\Facades\EmailVerification;
 
-$status = EmailVerifier::driver('emailable')->verify('user@example.com');
+$status = EmailVerification::driver('emailable')->verify('user@example.com');
 
 if ($status === EmailVerificationStatus::Deliverable) {
     // The provider positively classified the address as deliverable.

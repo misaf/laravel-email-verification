@@ -8,14 +8,14 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Misaf\LaravelEmailVerification\Contracts\EmailVerifier;
+use Misaf\LaravelEmailVerification\Contracts\EmailVerification;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 use Throwable;
 
 /**
  * Verifies deliverability through the Emailable API (https://emailable.com).
  */
-final class EmailableEmailVerifier implements EmailVerifier
+final class EmailableEmailVerification implements EmailVerification
 {
     public function __construct(
         private string $host,

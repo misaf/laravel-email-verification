@@ -7,9 +7,9 @@ namespace Misaf\LaravelEmailVerificationEmailable\Providers;
 use Composer\InstalledVersions;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Config;
-use Misaf\LaravelEmailVerification\Contracts\EmailVerifier;
-use Misaf\LaravelEmailVerification\EmailVerifierManager;
-use Misaf\LaravelEmailVerificationEmailable\EmailableEmailVerifier;
+use Misaf\LaravelEmailVerification\Contracts\EmailVerification;
+use Misaf\LaravelEmailVerification\EmailVerificationManager;
+use Misaf\LaravelEmailVerificationEmailable\EmailableEmailVerification;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -28,9 +28,9 @@ final class EmailableServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->make(EmailVerifierManager::class)->extend(
+        $this->app->make(EmailVerificationManager::class)->extend(
             'emailable',
-            fn(): EmailVerifier => new EmailableEmailVerifier(
+            fn(): EmailVerification => new EmailableEmailVerification(
                 Config::string('laravel-email-verification-emailable.host'),
                 Config::string('laravel-email-verification-emailable.api_key'),
             ),

@@ -1,6 +1,6 @@
 ---
 name: laravel-email-verification-emailable-development
-description: "Create, modify, review, or test the optional Emailable driver in the package root. Trigger for EmailableEmailVerifier, EmailableServiceProvider, Emailable API configuration, email-verification response mapping, HTTP retries or timeouts, and Emailable driver tests."
+description: "Create, modify, review, or test the optional Emailable driver in the package root. Trigger for EmailableEmailVerification, EmailableServiceProvider, Emailable API configuration, email-verification response mapping, HTTP retries or timeouts, and Emailable driver tests."
 ---
 
 # Laravel Email Verification Emailable
@@ -14,14 +14,14 @@ Use this skill together with `laravel-email-verification-development`, `laravel-
 Treat `the package root` as an optional concrete provider.
 
 - Use namespace `Misaf\LaravelEmailVerificationEmailable`.
-- Own only `EmailableEmailVerifier`, its config, tests, and driver registration in `EmailableServiceProvider`.
-- Depend on `misaf/laravel-email-verification` and implement its `EmailVerifier` contract.
+- Own only `EmailableEmailVerification`, its config, tests, and driver registration in `EmailableServiceProvider`.
+- Depend on `misaf/laravel-email-verification` and implement its `EmailVerification` contract.
 - Never move Emailable HTTP logic, credentials, or dependencies into the core package.
 - Do not depend on other packages you do not need.
 
 ## Driver Semantics
 
-- Register the driver as `emailable` through `EmailVerifierManager::extend()`.
+- Register the driver as `emailable` through `EmailVerificationManager::extend()`.
 - Read `host` and `api_key` from `laravel-email-verification-emailable` using typed configuration access.
 - Map `deliverable` to `Deliverable`, `undeliverable` to `Undeliverable`, and `risky` to `Risky`.
 - Map `unknown`, unrecognized states, malformed payloads, unsuccessful responses, timeouts, and exceptions to `Unverifiable`.

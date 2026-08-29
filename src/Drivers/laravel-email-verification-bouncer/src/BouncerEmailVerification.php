@@ -8,14 +8,14 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Misaf\LaravelEmailVerification\Contracts\EmailVerifier;
+use Misaf\LaravelEmailVerification\Contracts\EmailVerification;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 use Throwable;
 
 /**
  * Verifies deliverability through the Bouncer API (https://usebouncer.com).
  */
-final class BouncerEmailVerifier implements EmailVerifier
+final class BouncerEmailVerification implements EmailVerification
 {
     /**
      * Server-side verification budget; must stay below the HTTP client timeout.

@@ -5,7 +5,7 @@ A [Bouncer](https://usebouncer.com) deliverability driver for
 
 ## Features
 
-- Registers the `bouncer` verifier driver with the core manager
+- Registers the `bouncer` driver with the core manager
 - Uses Bouncer's real-time verification API (`GET /v1.1/email/verify`)
 - `x-api-key` header authentication — the key is never sent as a query parameter
 - Server-side timeout below the HTTP client timeout, so slow verifications come back as a clean result instead of a client abort
@@ -25,10 +25,10 @@ composer require misaf/laravel-email-verification-bouncer
 ```
 
 The service provider auto-registers and adds a `bouncer` driver to the
-email verifier manager. Point the core package at it:
+email verification manager. Point the core package at it:
 
 ```env
-EMAIL_VERIFIER_DRIVER=bouncer
+EMAIL_VERIFICATION_DRIVER=bouncer
 BOUNCER_HOST=https://api.usebouncer.com/v1.1/email/verify
 BOUNCER_API_KEY=your-key
 ```
@@ -70,7 +70,7 @@ Malformed payloads, unsuccessful HTTP responses (including 402 no-credits and
 
 ## Usage
 
-Once `EMAIL_VERIFIER_DRIVER` points at `bouncer`, the core `EmailValidation` rule
+Once `EMAIL_VERIFICATION_DRIVER` points at `bouncer`, the core `EmailValidation` rule
 uses this driver with no further changes. To use it for a single rule
 regardless of the configured default:
 
@@ -86,9 +86,9 @@ $request->validate([
 
 ```php
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
-use Misaf\LaravelEmailVerification\Facades\EmailVerifier;
+use Misaf\LaravelEmailVerification\Facades\EmailVerification;
 
-$status = EmailVerifier::driver('bouncer')->verify('user@example.com');
+$status = EmailVerification::driver('bouncer')->verify('user@example.com');
 
 if ($status === EmailVerificationStatus::Deliverable) {
     // The provider positively classified the address as deliverable.
