@@ -4,7 +4,7 @@
 
 The root package provides the provider-neutral verification contract, manager, facade, rules, and `null` driver under `src/`. Package configuration lives in `config/`, while translations and Laravel Boost guidance live in `resources/`. Pest tests are in `tests/Feature`, with shared setup in `tests/TestCase.php` and architecture checks in `tests/ArchTest.php`.
 
-First-party provider integrations are independent packages under `src/Drivers/laravel-email-verification-{bouncer,emailable}`. Each owns its `composer.json`, `src/`, `config/`, tests, documentation, and license. Keep provider SDK or HTTP behavior inside its driver package; the core must remain provider-neutral.
+First-party integrations are independent packages under `src/Drivers/laravel-email-verification-{bouncer,emailable}`. Each owns its `composer.json`, source, configuration, tests, documentation, and license. Keep provider SDK and HTTP behavior inside its driver package; the core must remain provider-neutral.
 
 ## Build, Test, and Development Commands
 
@@ -27,4 +27,4 @@ Tests use Pest 5 with Orchestra Testbench. Name files after the subject and suff
 
 Follow the repository's Conventional Commit style, including optional scopes: `feat(rule): reject invalid domains`, `docs(emailable): clarify retries`, or `refactor!: rename public API`. Keep commits focused.
 
-PRs must complete `.github/PULL_REQUEST_TEMPLATE.md`: explain outcome and scope, identify public API/configuration and cross-package effects, and list verification performed. Link relevant issues, document upgrade steps for breaking or manual changes, and update examples when public behavior changes. Screenshots are only needed for visual documentation changes.
+PRs must complete `.github/PULL_REQUEST_TEMPLATE.md`: explain outcome and scope, identify public API, configuration, and cross-package effects, and list verification performed. Link relevant issues, document upgrade steps for breaking or manual changes, and update examples when public behavior changes. Screenshots are only needed for visual documentation changes.
