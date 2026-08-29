@@ -9,6 +9,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Illuminate\Translation\PotentiallyTranslatedString;
+use InvalidArgumentException;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 use Misaf\LaravelEmailVerification\Facades\EmailVerification;
 
@@ -68,12 +69,21 @@ final class EmailValidation implements ValidationRule
         return in_array($domain, $allowedDomains, true);
     }
 
-    /** @return array<array-key, mixed> */
+    /** @return array<array-key, string> */
     private function allowedDomains(): array
     {
-        return array_map(
-            static fn(mixed $domain): mixed => is_string($domain) ? Str::lower($domain) : $domain,
-            Config::array('laravel-email-verification.allowed_domains', []),
-        );
+        $allowedDomains = Config::array('laravel-email-verification.allowed_domains', []);
+
+        foreach ($allowedDomains as $key => $domain) {
+            if ( ! is_string($domain) || '' === mb_trim($domain)) {
+                throw new InvalidArgumentException(
+                    sprintf('The laravel-email-verification.allowed_domains value at key [%s] must be a non-empty string.', $key),
+                );
+            }
+
+            $allowedDomains[$key] = Str::lower($domain);
+        }
+
+        return $allowedDomains;
     }
 }
