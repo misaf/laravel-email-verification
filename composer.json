@@ -63,7 +63,9 @@
         "psr-4": {
             "Misaf\\LaravelEmailVerification\\Tests\\": "tests/",
             "Misaf\\LaravelEmailVerificationBouncer\\": "src/Drivers/laravel-email-verification-bouncer/src/",
-            "Misaf\\LaravelEmailVerificationEmailable\\": "src/Drivers/laravel-email-verification-emailable/src/"
+            "Misaf\\LaravelEmailVerificationBouncer\\Tests\\": "src/Drivers/laravel-email-verification-bouncer/tests/",
+            "Misaf\\LaravelEmailVerificationEmailable\\": "src/Drivers/laravel-email-verification-emailable/src/",
+            "Misaf\\LaravelEmailVerificationEmailable\\Tests\\": "src/Drivers/laravel-email-verification-emailable/tests/"
         }
     },
     "config": {
