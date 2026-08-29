@@ -68,5 +68,5 @@ it('fails validation when the resolved driver reports the address undeliverable'
         $failures[] = $message;
     });
 
-    expect($failures)->not->toBeEmpty();
+    expect($failures)->toBe([__('laravel-email-verification::validation.email.undeliverable')]);
 });

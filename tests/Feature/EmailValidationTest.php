@@ -66,7 +66,10 @@ it('rejects a configured domain with surrounding whitespace', function (): void 
 );
 
 it('rejects a disallowed domain', function (): void {
-    expect(emailValidationFailures('user@blocked.test'))->not->toBeEmpty();
+    expect(emailValidationFailures('user@blocked.test'))
+        ->toBe([__('laravel-email-verification::validation.email.domain_not_allowed', [
+            'domain' => 'blocked.test',
+        ])]);
 });
 
 it('imposes no domain restriction when the allow-list is empty', function (): void {
@@ -90,7 +93,8 @@ it('rejects an address reported as risky', function (): void {
         },
     );
 
-    expect(emailValidationFailures('user@example.com', 'always-risky'))->not->toBeEmpty();
+    expect(emailValidationFailures('user@example.com', 'always-risky'))
+        ->toBe([__('laravel-email-verification::validation.email.risky')]);
 });
 
 it('rejects an address reported as unverifiable with a service unavailable message', function (): void {
