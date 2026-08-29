@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-use Misaf\LaravelEmailVerification\Contracts\EmailVerifier;
-use Misaf\LaravelEmailVerification\EmailVerifierManager;
+use Misaf\LaravelEmailVerification\Contracts\EmailVerification;
+use Misaf\LaravelEmailVerification\EmailVerificationManager;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 use Misaf\LaravelEmailVerification\Rules\EmailValidation;
 
 /**
  * @return list<string>
  */
-function emailValidationFailures(mixed $email, ?string $verifier = null): array
+function emailValidationFailures(mixed $email, ?string $driver = null): array
 {
     return validator(
         ['email' => $email],
-        ['email' => [new EmailValidation($verifier)]],
+        ['email' => [new EmailValidation($driver)]],
     )->errors()->get('email');
 }
 
@@ -53,9 +53,9 @@ it('passes an allowed domain with the null driver', function (): void {
 });
 
 it('rejects an address reported as risky', function (): void {
-    app()->make(EmailVerifierManager::class)->extend(
+    app()->make(EmailVerificationManager::class)->extend(
         'always-risky',
-        fn(): EmailVerifier => new class implements EmailVerifier {
+        fn(): EmailVerification => new class implements EmailVerification {
             public function verify(string $email): EmailVerificationStatus
             {
                 return EmailVerificationStatus::Risky;
@@ -67,9 +67,9 @@ it('rejects an address reported as risky', function (): void {
 });
 
 it('rejects an address reported as unverifiable with a service unavailable message', function (): void {
-    app()->make(EmailVerifierManager::class)->extend(
+    app()->make(EmailVerificationManager::class)->extend(
         'always-unverifiable',
-        fn(): EmailVerifier => new class implements EmailVerifier {
+        fn(): EmailVerification => new class implements EmailVerification {
             public function verify(string $email): EmailVerificationStatus
             {
                 return EmailVerificationStatus::Unverifiable;

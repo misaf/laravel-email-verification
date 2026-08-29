@@ -1,6 +1,6 @@
 ---
 name: laravel-email-verification-development
-description: "Create, modify, review, or test the provider-neutral Laravel Email Verification core package in the package root. Trigger for EmailVerifier, EmailVerifierManager, EmailVerificationStatus, EmailValidation, NullEmailVerifier, custom email-verification drivers, allowed email domains, deliverability validation, or the laravel-email-verification configuration and translations."
+description: "Create, modify, review, or test the provider-neutral Laravel Email Verification core package in the package root. Trigger for EmailVerification, EmailVerificationManager, EmailVerificationStatus, EmailValidation, NullEmailVerification, custom email-verification drivers, allowed email domains, deliverability validation, or the laravel-email-verification configuration and translations."
 ---
 
 # Laravel Email Verification
@@ -14,9 +14,9 @@ Use `laravel-best-practices` for Laravel PHP and `pest-testing` whenever tests c
 Treat `the package root` as the standalone, provider-neutral core.
 
 - Use namespace `Misaf\LaravelEmailVerification`.
-- Own `Contracts\EmailVerifier`, `EmailVerifierManager`, `EmailVerificationStatus`, the `EmailVerifier` facade, `EmailValidation`, and `NullEmailVerifier`.
+- Own `Contracts\EmailVerification`, `EmailVerificationManager`, `EmailVerificationStatus`, the `EmailVerification` facade, `EmailValidation`, and `NullEmailVerification`.
 - Do not import or require a concrete provider, another domain package.
-- Keep provider dependencies one-way: a provider package requires this core package and registers a driver through `EmailVerifierManager::extend()`.
+- Keep provider dependencies one-way: a provider package requires this core package and registers a driver through `EmailVerificationManager::extend()`.
 - Keep public contracts, enum semantics, manager APIs, config keys, and translation keys stable.
 
 ## Verification Semantics

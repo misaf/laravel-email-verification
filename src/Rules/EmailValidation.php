@@ -9,18 +9,18 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Illuminate\Translation\PotentiallyTranslatedString;
-use Misaf\LaravelEmailVerification\EmailVerifierManager;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
+use Misaf\LaravelEmailVerification\Facades\EmailVerification;
 
 final class EmailValidation implements ValidationRule
 {
     /**
-     * @param  string|null  $verifier  Deliverability driver name; null uses the configured default.
+     * @param string|null $driver
      */
-    public function __construct(private ?string $verifier = null) {}
+    public function __construct(private ?string $driver = null) {}
 
     /**
-     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
+     * @param Closure(string, ?string=): PotentiallyTranslatedString $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -41,7 +41,7 @@ final class EmailValidation implements ValidationRule
             return;
         }
 
-        $status = app()->make(EmailVerifierManager::class)->verifier($this->verifier)->verify($value);
+        $status = EmailVerification::driver($this->driver)->verify($value);
 
         match ($status) {
             EmailVerificationStatus::Deliverable   => null,
@@ -57,9 +57,7 @@ final class EmailValidation implements ValidationRule
     }
 
     /**
-     * An empty allow-list imposes no domain restriction.
-     *
-     * @param  array<array-key, mixed>  $allowedDomains
+     * @param array<array-key, mixed> $allowedDomains
      */
     private function isAllowedDomain(string $domain, array $allowedDomains): bool
     {

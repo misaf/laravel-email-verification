@@ -6,7 +6,7 @@ namespace Misaf\LaravelEmailVerification\Contracts;
 
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 
-interface EmailVerifier
+interface EmailVerification
 {
     /**
      * Determine whether the given email address is deliverable.

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Misaf\LaravelEmailVerification\Providers;
 
 use Composer\InstalledVersions;
+use Illuminate\Contracts\Container\Container as Application;
 use Illuminate\Foundation\Console\AboutCommand;
-use Misaf\LaravelEmailVerification\Contracts\EmailVerifier;
-use Misaf\LaravelEmailVerification\EmailVerifierManager;
+use Misaf\LaravelEmailVerification\EmailVerificationManager;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -27,11 +27,12 @@ final class EmailVerificationServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->singleton(EmailVerifierManager::class);
-        $this->app->bind(
-            EmailVerifier::class,
-            fn(): EmailVerifier => $this->app->make(EmailVerifierManager::class)->verifier(),
+        $this->app->singleton(
+            EmailVerificationManager::class,
+            fn(Application $app): EmailVerificationManager => new EmailVerificationManager($app),
         );
+
+        $this->app->alias(EmailVerificationManager::class, 'email-verification');
     }
 
     public function packageBooted(): void
