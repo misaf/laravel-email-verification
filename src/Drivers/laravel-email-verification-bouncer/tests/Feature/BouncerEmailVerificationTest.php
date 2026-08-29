@@ -20,15 +20,18 @@ it('registers the bouncer driver on the manager', function (): void {
         ->toBeInstanceOf(BouncerEmailVerification::class);
 });
 
-it('authenticates with an x-api-key header and sends the email as a query parameter', function (): void {
+it('sends the expected request to the configured endpoint', function (): void {
     Http::fake(['*' => Http::response(['status' => 'deliverable'], 200)]);
 
     app(EmailVerificationManager::class)->driver('bouncer')->verify('user@example.com');
 
     Http::assertSent(function ($request): bool {
-        return $request->hasHeader('x-api-key', 'test-key')
+        return 'GET' === $request->method()
+            && str_starts_with($request->url(), 'https://api.usebouncer.test/v1.1/email/verify?')
+            && $request->hasHeader('accept', 'application/json')
+            && $request->hasHeader('x-api-key', 'test-key')
             && 'user@example.com' === $request['email']
-            && is_numeric($request['timeout']);
+            && 5 === $request['timeout'];
     });
 });
 
@@ -100,4 +103,26 @@ it('retries a server error before giving up', function (): void {
         ->toBe(EmailVerificationStatus::Unverifiable);
 
     Http::assertSentCount(2);
+});
+
+it('retries a connection failure before returning unverifiable', function (): void {
+    Http::fake(['*' => Http::failedConnection('Connection failed.')]);
+    Log::shouldReceive('error')
+        ->once()
+        ->with('Bouncer API connection timeout.');
+
+    expect(app(EmailVerificationManager::class)->driver('bouncer')->verify('user@example.com'))
+        ->toBe(EmailVerificationStatus::Unverifiable);
+
+    Http::assertSentCount(2);
+});
+
+it('handles an unexpected client exception', function (): void {
+    Http::fake(fn() => throw new RuntimeException('Unexpected failure.'));
+    Log::shouldReceive('error')
+        ->once()
+        ->with('Unexpected Bouncer verification error.', ['exception' => RuntimeException::class]);
+
+    expect(app(EmailVerificationManager::class)->driver('bouncer')->verify('user@example.com'))
+        ->toBe(EmailVerificationStatus::Unverifiable);
 });

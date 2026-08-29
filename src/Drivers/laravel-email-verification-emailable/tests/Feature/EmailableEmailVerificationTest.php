@@ -20,6 +20,19 @@ it('registers the emailable driver on the manager', function (): void {
         ->toBeInstanceOf(EmailableEmailVerification::class);
 });
 
+it('sends the expected request to the configured endpoint', function (): void {
+    Http::fake(['*' => Http::response(['state' => 'deliverable'], 200)]);
+
+    app(EmailVerificationManager::class)->driver('emailable')->verify('user@example.com');
+
+    Http::assertSent(function ($request): bool {
+        return 'GET' === $request->method()
+            && str_starts_with($request->url(), 'https://api.emailable.test/verify?')
+            && 'test-key' === $request['api_key']
+            && 'user@example.com' === $request['email'];
+    });
+});
+
 it('maps a deliverable response', function (): void {
     Http::fake(['*' => Http::response(['state' => 'deliverable'], 200)]);
 
@@ -81,4 +94,26 @@ it('retries a server error before giving up', function (): void {
         ->toBe(EmailVerificationStatus::Unverifiable);
 
     Http::assertSentCount(2);
+});
+
+it('retries a connection failure before returning unverifiable', function (): void {
+    Http::fake(['*' => Http::failedConnection('Connection failed.')]);
+    Log::shouldReceive('error')
+        ->once()
+        ->with('Emailable API connection timeout.');
+
+    expect(app(EmailVerificationManager::class)->driver('emailable')->verify('user@example.com'))
+        ->toBe(EmailVerificationStatus::Unverifiable);
+
+    Http::assertSentCount(2);
+});
+
+it('handles an unexpected client exception', function (): void {
+    Http::fake(fn() => throw new RuntimeException('Unexpected failure.'));
+    Log::shouldReceive('error')
+        ->once()
+        ->with('Unexpected Emailable verification error.', ['exception' => RuntimeException::class]);
+
+    expect(app(EmailVerificationManager::class)->driver('emailable')->verify('user@example.com'))
+        ->toBe(EmailVerificationStatus::Unverifiable);
 });
