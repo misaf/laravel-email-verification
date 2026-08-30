@@ -11,7 +11,7 @@ does that well. Pair the two rules:
 | --- | --- |
 | Email syntax (RFC, spoof, DNS-safe filtering) | Laravel's built-in `email` rule |
 | Domain allow-list | `Misaf\LaravelEmailVerification\Rules\EmailValidation` |
-| Deliverability verification | `EmailValidation`, through the configured driver |
+| Deliverability verification | the configured driver, reached through `EmailValidation` or the `EmailVerification` facade |
 
 ```text
 Laravel email validation rule
@@ -27,6 +27,16 @@ deliverability driver
 
 The allow-list runs first and short-circuits, so a blocked domain never reaches
 the provider and never spends paid API quota.
+
+There are two entry points, and they are deliberately not the same thing:
+
+- `new EmailValidation()` — a validation rule: **allowed domain check →
+  deliverability verification**.
+- `EmailVerification::verify()` — the driver boundary: **deliverability
+  verification only**, with no allow-list applied.
+
+See [Verifying an address directly](#verifying-an-address-directly) for when to
+reach for which.
 
 ## Features
 
@@ -97,12 +107,15 @@ messages:
 php artisan vendor:publish --tag=email-verification-translations
 ```
 
-An install command is also available, which publishes the config and walks you
-through setup:
+An install command is also available. It publishes the same config file and
+then offers to open the repository on GitHub:
 
 ```bash
 php artisan email-verification:install
 ```
+
+It does not publish the translations — do that separately if you want to
+override the messages.
 
 Each driver package publishes its own config under a matching tag, e.g.:
 
@@ -208,6 +221,27 @@ if ($status === EmailVerificationStatus::Deliverable) {
     // ...
 }
 ```
+
+`EmailVerification::verify()` performs **deliverability verification only**. It
+asks the configured driver about the address and returns the driver's answer.
+It does not consult `allowed_domains`, and it does not check syntax — every
+call reaches the driver and, with a real driver, spends quota.
+
+The allow-list belongs to the validation rule, not the driver boundary:
+
+| | `EmailVerification::verify()` | `new EmailValidation()` |
+| --- | --- | --- |
+| Syntax check | no — pair with Laravel's `email` rule | no — pair with Laravel's `email` rule |
+| `allowed_domains` check | **no** | **yes**, first, and it short-circuits |
+| Deliverability verification | yes | yes, only if the domain is allowed |
+| Returns | an `EmailVerificationStatus` | a pass/fail validation result |
+
+So `new EmailValidation()` is `allowed domain check → deliverability
+verification`, while `EmailVerification::verify()` is the deliverability step on
+its own. Use the facade when you want a driver's verdict about any address —
+for a queued re-check of a stored address, say — and the rule when you are
+validating user input. Neither is layered on top of the other; if you want the
+allow-list applied to a direct call, run the rule instead.
 
 ### Registering a custom driver
 
