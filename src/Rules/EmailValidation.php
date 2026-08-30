@@ -15,9 +15,6 @@ use Misaf\LaravelEmailVerification\Facades\EmailVerification;
 
 final class EmailValidation implements ValidationRule
 {
-    /**
-     * @param string|null $driver
-     */
     public function __construct(private ?string $driver = null) {}
 
     /**
@@ -26,6 +23,12 @@ final class EmailValidation implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if ( ! is_string($value)) {
+            $fail(__('laravel-email-verification::validation.email.invalid'));
+
+            return;
+        }
+
+        if ( ! Str::contains($value, '@')) {
             $fail(__('laravel-email-verification::validation.email.invalid'));
 
             return;

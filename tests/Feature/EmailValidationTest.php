@@ -111,3 +111,8 @@ it('rejects an address reported as unverifiable with a service unavailable messa
     expect(emailValidationFailures('user@example.com', 'always-unverifiable'))
         ->toBe([__('laravel-email-verification::validation.email.service_unavailable')]);
 });
+
+it('rejects a value with no domain part', function (): void {
+    expect(emailValidationFailures('not-an-email'))
+        ->toBe([__('laravel-email-verification::validation.email.invalid')]);
+});
