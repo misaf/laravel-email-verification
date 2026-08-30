@@ -1,6 +1,6 @@
 ---
 name: laravel-email-verification-development
-description: "Create, modify, review, or test the provider-neutral Laravel Email Verification core package in the package root. Trigger for EmailVerification, EmailVerificationManager, EmailVerificationStatus, EmailValidation, NullEmailVerification, custom email-verification drivers, allowed email domains, deliverability validation, or the laravel-email-verification configuration and translations."
+description: "Create, modify, review, or test the provider-neutral Laravel Email Verification core package in the package root. Trigger for EmailVerification, EmailVerificationManager, EmailVerificationStatus, EmailValidation, NullEmailVerification, custom email-verification drivers, allowed email domains, deliverability validation, or the email-verification configuration and translations."
 ---
 
 # Laravel Email Verification
@@ -29,16 +29,17 @@ Treat `the package root` as the standalone, provider-neutral core.
 
 ## Validation Rule
 
-- Treat an empty `laravel-email-verification.allowed_domains` list as unrestricted.
+- Treat an empty `email-verification.allowed_domains` list as unrestricted.
 - Normalize the extracted domain before comparing it with the configured list.
-- Use `EmailValidation` after Laravel's syntax-oriented email rule; this rule owns domain policy and deliverability, not RFC syntax validation.
-- Resolve drivers through the manager and return localized messages from the `laravel-email-verification` translation namespace.
+- Use `EmailValidation` after Laravel's `email` rule; this rule owns domain policy and deliverability, never email syntax.
+- Resolve drivers through the manager and return localized messages from the `email-verification` translation namespace.
 - Keep `en`, `de`, and `fa` translation keys synchronized whenever validation outcomes change.
 
 ## Testing And Verification
 
 - Cover non-string input, restricted and unrestricted domains, the null driver, custom driver registration, and every status that affects validation.
-- Keep provider-specific response mapping out of this package's tests.
+- Prove a blocked domain never reaches the driver; provider verification costs paid API quota.
+- Keep provider-specific response mapping, HTTP behavior, and retry policy out of this package and its tests.
 - Keep the Pest architecture presets and assert the core stays provider-neutral.
 - Run `php artisan test --compact `.
 - Run targeted PHPStan analysis for `the package root/src`.

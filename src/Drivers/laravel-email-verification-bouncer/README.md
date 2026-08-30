@@ -9,6 +9,7 @@ A [Bouncer](https://usebouncer.com) deliverability driver for
 - Uses Bouncer's real-time verification API (`GET /v1.1/email/verify`)
 - `x-api-key` header authentication — the key is never sent as a query parameter
 - Server-side timeout below the HTTP client timeout, so slow verifications come back as a clean result instead of a client abort
+- Configurable timeouts and a retry budget owned by this package — only connection failures and 5xx responses are retried, so a 4xx never burns paid quota on an answer that cannot change
 - Explicit mapping for every Bouncer verification status
 - Safe unverifiable results for provider failures, exhausted credits, rate limits, and unexpected responses
 
@@ -36,24 +37,43 @@ BOUNCER_API_KEY=your-key
 Publish the config to override credentials:
 
 ```bash
-php artisan vendor:publish --tag=laravel-email-verification-bouncer-config
+php artisan vendor:publish --tag=email-verification-bouncer-config
 ```
 
 An install command is also available, which publishes the config and walks you
 through setup:
 
 ```bash
-php artisan laravel-email-verification-bouncer:install
+php artisan email-verification-bouncer:install
 ```
 
 ## Configuration
 
-`config/laravel-email-verification-bouncer.php`:
+`config/email-verification-bouncer.php`:
 
 - `host` — the Bouncer real-time verify endpoint, normally `https://api.usebouncer.com/v1.1/email/verify`
 - `api_key` — the private Bouncer API key (generated in the Bouncer dashboard under *API*)
+- `timeout.server` — the verification budget asked of Bouncer (`BOUNCER_SERVER_TIMEOUT`, default `5`)
+- `timeout.client` — how long this application waits for the response (`BOUNCER_CLIENT_TIMEOUT`, default `6`). Keep it above `timeout.server`.
+- `retry.times` — total attempts per verification (`BOUNCER_RETRY_TIMES`, default `2`)
+- `retry.sleep_milliseconds` — pause between attempts (`BOUNCER_RETRY_SLEEP`, default `100`)
 
-The credentials remain separate from the provider-neutral core configuration.
+Only transient faults are retried: a connection failure, or a server-side 5xx.
+A 4xx is never retried — a bad key or a rate limit cannot resolve itself, and
+retrying it would only burn paid API quota.
+
+```env
+BOUNCER_HOST=https://api.usebouncer.com/v1.1/email/verify
+BOUNCER_API_KEY=your-key
+
+BOUNCER_CLIENT_TIMEOUT=6
+BOUNCER_SERVER_TIMEOUT=5
+BOUNCER_RETRY_TIMES=2
+BOUNCER_RETRY_SLEEP=100
+```
+
+Timeouts and retry behavior are configured here, not in the core package: the
+core knows nothing about how a provider communicates.
 
 ## Verification Outcomes
 

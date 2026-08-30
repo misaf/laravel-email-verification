@@ -21,8 +21,8 @@ Treat `the package root` as an optional concrete provider.
 
 ## Driver Semantics
 
-- Register the driver as `emailable` through `EmailVerificationManager::extend()`.
-- Read `host` and `api_key` from `laravel-email-verification-emailable` using typed configuration access.
+- Register the driver as `emailable` through `EmailVerificationManager::extend()`, from a deferred `callAfterResolving()` callback so provider registration order cannot matter.
+- Read `host`, `api_key`, `timeout.server`, `timeout.client`, `retry.times`, and `retry.sleep_milliseconds` from `email-verification-emailable` using typed configuration access.
 - Map `deliverable` to `Deliverable`, `undeliverable` to `Undeliverable`, and `risky` to `Risky`.
 - Map `unknown`, unrecognized states, malformed payloads, unsuccessful responses, timeouts, and exceptions to `Unverifiable`.
 - Never report an ambiguous or failed verification as `Deliverable`.

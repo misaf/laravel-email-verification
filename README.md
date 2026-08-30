@@ -2,6 +2,32 @@
 
 Provider-neutral email domain and deliverability validation for Laravel applications.
 
+## Responsibilities
+
+This package deliberately does **not** validate email syntax — Laravel already
+does that well. Pair the two rules:
+
+| Concern | Owner |
+| --- | --- |
+| Email syntax (RFC, spoof, DNS-safe filtering) | Laravel's built-in `email` rule |
+| Domain allow-list | `Misaf\LaravelEmailVerification\Rules\EmailValidation` |
+| Deliverability verification | `EmailValidation`, through the configured driver |
+
+```text
+Laravel email validation rule
+        ↓
+syntax validation
+
+Laravel Email Verification
+        ↓
+domain allow-list
+        ↓
+deliverability driver
+```
+
+The allow-list runs first and short-circuits, so a blocked domain never reaches
+the provider and never spends paid API quota.
+
 ## Features
 
 - A `ValidationRule` that enforces an optional domain allow-list plus pluggable deliverability verification
@@ -48,9 +74,9 @@ composer require misaf/laravel-email-verification-bouncer
 
 | Package | Driver name | Provider | Config file |
 | --- | --- | --- | --- |
-| *(core)* | `null` | none — always `Deliverable` | `laravel-email-verification.php` |
-| `misaf/laravel-email-verification-emailable` | `emailable` | [Emailable](https://emailable.com) | `laravel-email-verification-emailable.php` |
-| `misaf/laravel-email-verification-bouncer` | `bouncer` | [Bouncer](https://usebouncer.com) | `laravel-email-verification-bouncer.php` |
+| *(core)* | `null` | none — always `Deliverable` | `email-verification.php` |
+| `misaf/laravel-email-verification-emailable` | `emailable` | [Emailable](https://emailable.com) | `email-verification-emailable.php` |
+| `misaf/laravel-email-verification-bouncer` | `bouncer` | [Bouncer](https://usebouncer.com) | `email-verification-bouncer.php` |
 
 Each driver package requires the core and is listed under the core's composer
 `suggest`, so `composer require misaf/laravel-email-verification` will prompt you
@@ -61,28 +87,28 @@ All service providers are auto-registered.
 Publish the config to customise the allowed domains and deliverability wiring:
 
 ```bash
-php artisan vendor:publish --tag=laravel-email-verification-config
+php artisan vendor:publish --tag=email-verification-config
 ```
 
 The translations can be published as well, if you want to override the failure
 messages:
 
 ```bash
-php artisan vendor:publish --tag=laravel-email-verification-translations
+php artisan vendor:publish --tag=email-verification-translations
 ```
 
 An install command is also available, which publishes the config and walks you
 through setup:
 
 ```bash
-php artisan laravel-email-verification:install
+php artisan email-verification:install
 ```
 
 Each driver package publishes its own config under a matching tag, e.g.:
 
 ```bash
-php artisan vendor:publish --tag=laravel-email-verification-emailable-config
-php artisan vendor:publish --tag=laravel-email-verification-bouncer-config
+php artisan vendor:publish --tag=email-verification-emailable-config
+php artisan vendor:publish --tag=email-verification-bouncer-config
 ```
 
 ### Using both drivers together
@@ -108,7 +134,7 @@ new EmailValidation('bouncer');   // this rule only, regardless of the default
 
 ## Configuration
 
-`config/laravel-email-verification.php`:
+`config/email-verification.php`:
 
 - `default` — the deliverability driver name (`EMAIL_VERIFICATION_DRIVER`). The core package provides only `null`; installing a driver package makes its driver name (`emailable`, `bouncer`) available here.
 - `allowed_domains` — the domains the rule accepts. Comparison is
@@ -122,6 +148,10 @@ new EmailValidation('bouncer');   // this rule only, regardless of the default
     'example.org',
 ],
 ```
+
+That is the whole core configuration. Endpoints, credentials, timeouts, and
+retry behavior belong to the driver package that performs the request — see the
+driver's own README and config file.
 
 ## Usage
 
@@ -137,13 +167,17 @@ $request->validate([
 ]);
 ```
 
+Laravel's `email` rule runs first and rejects anything that is not a
+syntactically valid address; `bail` stops there, so `EmailValidation` only ever
+sees a well-formed address and only ever spends quota on one.
+
 The rule is a plain `ValidationRule`, so it works anywhere Laravel accepts one
 — form requests, `Validator::make()`, Filament fields, and so on:
 
 ```php
 TextInput::make('email')
     ->email()
-    ->rules(['bail', new EmailValidation()]);
+    ->rules(['bail', 'email:rfc,strict', new EmailValidation()]);
 ```
 
 `new EmailValidation()` uses the configured default driver. Pass a driver name to override per use: `new EmailValidation('bouncer')`.
@@ -182,6 +216,30 @@ use Misaf\LaravelEmailVerification\Contracts\EmailVerification as EmailVerificat
 use Misaf\LaravelEmailVerification\EmailVerificationManager;
 
 app(EmailVerificationManager::class)->extend('my-provider', fn (): EmailVerificationContract => new MyProviderVerification());
+```
+
+From a package service provider, defer the registration instead of resolving
+the manager during `register()`, so your package works regardless of the order
+Laravel discovers it in:
+
+```php
+$this->callAfterResolving(
+    EmailVerificationManager::class,
+    fn (EmailVerificationManager $manager) => $manager->extend(
+        'my-provider',
+        fn (): EmailVerificationContract => new MyProviderVerification(),
+    ),
+);
+```
+
+## Localization
+
+Failure messages come from the `email-verification` translation namespace, e.g.
+`email-verification::validation.email.risky`. Publish the translations to
+override them:
+
+```bash
+php artisan vendor:publish --tag=email-verification-translations
 ```
 
 ## Testing

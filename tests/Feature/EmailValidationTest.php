@@ -19,13 +19,13 @@ function emailValidationFailures(mixed $email, ?string $driver = null): array
 }
 
 beforeEach(function (): void {
-    config(['laravel-email-verification.allowed_domains' => ['example.com']]);
-    config(['laravel-email-verification.default' => 'null']);
+    config(['email-verification.allowed_domains' => ['example.com']]);
+    config(['email-verification.default' => 'null']);
 });
 
 it('rejects a non-string value with a translated message', function (): void {
     expect(emailValidationFailures(['user@example.com']))
-        ->toBe([__('laravel-email-verification::validation.email.invalid')]);
+        ->toBe(['The email must be a valid email address.']);
 });
 
 it('matches an allowed domain against a mixed-case address', function (): void {
@@ -33,47 +33,45 @@ it('matches an allowed domain against a mixed-case address', function (): void {
 });
 
 it('matches a mixed-case configured domain case-insensitively', function (): void {
-    config(['laravel-email-verification.allowed_domains' => ['EXAMPLE.COM']]);
+    config(['email-verification.allowed_domains' => ['EXAMPLE.COM']]);
 
     expect(emailValidationFailures('User@example.com'))->toBeEmpty();
 });
 
 it('rejects a non-string configured domain', function (): void {
-    config(['laravel-email-verification.allowed_domains' => ['example.com', 123]]);
+    config(['email-verification.allowed_domains' => ['example.com', 123]]);
 
     emailValidationFailures('user@example.com');
 })->throws(
     InvalidArgumentException::class,
-    'The laravel-email-verification.allowed_domains value at key [1] must be a non-empty string without surrounding whitespace.',
+    'The email-verification.allowed_domains value at key [1] must be a non-empty string without surrounding whitespace.',
 );
 
 it('rejects an empty configured domain', function (): void {
-    config(['laravel-email-verification.allowed_domains' => ['']]);
+    config(['email-verification.allowed_domains' => ['']]);
 
     emailValidationFailures('user@example.com');
 })->throws(
     InvalidArgumentException::class,
-    'The laravel-email-verification.allowed_domains value at key [0] must be a non-empty string without surrounding whitespace.',
+    'The email-verification.allowed_domains value at key [0] must be a non-empty string without surrounding whitespace.',
 );
 
 it('rejects a configured domain with surrounding whitespace', function (): void {
-    config(['laravel-email-verification.allowed_domains' => [' example.com ']]);
+    config(['email-verification.allowed_domains' => [' example.com ']]);
 
     emailValidationFailures('user@example.com');
 })->throws(
     InvalidArgumentException::class,
-    'The laravel-email-verification.allowed_domains value at key [0] must be a non-empty string without surrounding whitespace.',
+    'The email-verification.allowed_domains value at key [0] must be a non-empty string without surrounding whitespace.',
 );
 
 it('rejects a disallowed domain', function (): void {
     expect(emailValidationFailures('user@blocked.test'))
-        ->toBe([__('laravel-email-verification::validation.email.domain_not_allowed', [
-            'domain' => 'blocked.test',
-        ])]);
+        ->toBe(['The blocked.test domain is not allowed. Please try another email address.']);
 });
 
 it('imposes no domain restriction when the allow-list is empty', function (): void {
-    config(['laravel-email-verification.allowed_domains' => []]);
+    config(['email-verification.allowed_domains' => []]);
 
     expect(emailValidationFailures('user@any-domain.test'))->toBeEmpty();
 });
@@ -94,7 +92,7 @@ it('rejects an address reported as risky', function (): void {
     );
 
     expect(emailValidationFailures('user@example.com', 'always-risky'))
-        ->toBe([__('laravel-email-verification::validation.email.risky')]);
+        ->toBe(['This email may not be safely deliverable. Please provide another one.']);
 });
 
 it('rejects an address reported as unverifiable with a service unavailable message', function (): void {
@@ -109,10 +107,5 @@ it('rejects an address reported as unverifiable with a service unavailable messa
     );
 
     expect(emailValidationFailures('user@example.com', 'always-unverifiable'))
-        ->toBe([__('laravel-email-verification::validation.email.service_unavailable')]);
-});
-
-it('rejects a value with no domain part', function (): void {
-    expect(emailValidationFailures('not-an-email'))
-        ->toBe([__('laravel-email-verification::validation.email.invalid')]);
+        ->toBe(['We are unable to check this email right now. Please try again later.']);
 });

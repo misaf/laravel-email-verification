@@ -13,7 +13,8 @@ return [
     | package ships only the "null" driver, which performs no external check
     | and treats every address as deliverable. Install a driver package (e.g.
     | misaf/laravel-email-verification-emailable) to add real verification, then
-    | set this to its driver name.
+    | set this to its driver name. Each driver package owns its own endpoint,
+    | credential, timeout, and retry configuration.
     |
     */
 
@@ -31,23 +32,6 @@ return [
 
     'allowed_domains' => [
 
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Retry
-    |--------------------------------------------------------------------------
-    |
-    | How an HTTP driver retries a failed verification. Only transient faults
-    | are retried — a connection failure or a server-side 5xx. A 4xx is never
-    | retried, since a bad key or a rate limit cannot resolve itself and would
-    | only burn paid API quota.
-    |
-    */
-
-    'retry' => [
-        'times'              => env('EMAIL_VERIFICATION_RETRY_TIMES', 2),
-        'sleep_milliseconds' => env('EMAIL_VERIFICATION_RETRY_SLEEP', 100),
     ],
 
 ];

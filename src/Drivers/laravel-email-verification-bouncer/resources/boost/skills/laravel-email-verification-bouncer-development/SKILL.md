@@ -21,8 +21,8 @@ Treat `the package root` as an optional concrete provider.
 
 ## Driver Semantics
 
-- Register the driver as `bouncer` through `EmailVerificationManager::extend()`.
-- Read `host` and `api_key` from `laravel-email-verification-bouncer` using typed configuration access.
+- Register the driver as `bouncer` through `EmailVerificationManager::extend()`, from a deferred `callAfterResolving()` callback so provider registration order cannot matter.
+- Read `host`, `api_key`, `timeout.server`, `timeout.client`, `retry.times`, and `retry.sleep_milliseconds` from `email-verification-bouncer` using typed configuration access.
 - Call Bouncer's real-time endpoint (`GET /v1.1/email/verify`) with the email as a query parameter and authenticate via the `x-api-key` header.
 - Keep the server-side verification `timeout` query parameter below the HTTP client timeout so slow verifications return a clean result instead of aborting the client request.
 - Map `deliverable` to `Deliverable`, `undeliverable` to `Undeliverable`, and `risky` to `Risky`.
@@ -32,7 +32,7 @@ Treat `the package root` as an optional concrete provider.
 ## Testing And Verification
 
 - Use `Http::fake()`; tests must never call the live Bouncer API.
-- Cover driver registration, header/query request shape, every recognized response status, unknown statuses, unsuccessful responses, and malformed payloads.
+- Cover driver registration in both provider orders, configured timeouts and retry budget, header/query request shape, every recognized response status, unknown statuses, unsuccessful responses, and malformed payloads.
 - Keep the Pest architecture presets and assert the driver depends only on the core contract.
 - Run `php artisan test --compact tests/` (Bouncer driver).
 - Run targeted PHPStan analysis for `the package root/src`.

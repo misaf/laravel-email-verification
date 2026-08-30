@@ -26,14 +26,22 @@ final class EmailableServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->make(EmailVerificationManager::class)->extend(
-            'emailable',
-            fn(): EmailVerification => new EmailableEmailVerification(
-                Config::string('laravel-email-verification-emailable.host'),
-                Config::string('laravel-email-verification-emailable.api_key'),
-                Config::integer('laravel-email-verification.retry.times', 2),
-                Config::integer('laravel-email-verification.retry.sleep_milliseconds', 100),
-            ),
+        // Deferred, so this provider never resolves the manager itself. Doing
+        // so during registration would build a throwaway manager whenever this
+        // package is registered before the core one, silently losing the
+        // driver.
+        $this->callAfterResolving(
+            EmailVerificationManager::class,
+            function (EmailVerificationManager $manager): void {
+                $manager->extend('emailable', fn(): EmailVerification => new EmailableEmailVerification(
+                    Config::string('email-verification-emailable.host'),
+                    Config::string('email-verification-emailable.api_key'),
+                    Config::integer('email-verification-emailable.timeout.server', 5),
+                    Config::integer('email-verification-emailable.timeout.client', 6),
+                    Config::integer('email-verification-emailable.retry.times', 2),
+                    Config::integer('email-verification-emailable.retry.sleep_milliseconds', 100),
+                ));
+            },
         );
     }
 }

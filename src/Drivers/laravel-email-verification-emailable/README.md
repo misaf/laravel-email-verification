@@ -7,8 +7,8 @@ An [Emailable](https://emailable.com) deliverability driver for
 
 - Registers the `emailable` driver with the core manager
 - Uses Emailable's verification API (`GET /v1/verify`)
-- 6-second HTTP timeout, so a slow verification comes back as a clean result instead of hanging the request
-- Retries only connection failures and 5xx responses — a 4xx, including a 429 rate limit, is never retried, so paid API quota is not burned on an answer that cannot change
+- A server-side timeout below the HTTP client timeout, so a slow verification comes back as a clean result instead of a client abort
+- Configurable timeouts and a retry budget owned by this package — only connection failures and 5xx responses are retried, so a 4xx never burns paid quota on an answer that cannot change
 - Explicit mapping for every Emailable verification state
 - Safe unverifiable results for provider failures, malformed payloads, timeouts, and unexpected responses
 
@@ -36,24 +36,43 @@ EMAILABLE_API_KEY=your-key
 Publish the config to override credentials:
 
 ```bash
-php artisan vendor:publish --tag=laravel-email-verification-emailable-config
+php artisan vendor:publish --tag=email-verification-emailable-config
 ```
 
 An install command is also available, which publishes the config and walks you
 through setup:
 
 ```bash
-php artisan laravel-email-verification-emailable:install
+php artisan email-verification-emailable:install
 ```
 
 ## Configuration
 
-`config/laravel-email-verification-emailable.php`:
+`config/email-verification-emailable.php`:
 
 - `host` — the Emailable verification endpoint, normally `https://api.emailable.com/v1/verify`
 - `api_key` — the private Emailable API key
+- `timeout.server` — the verification budget asked of Emailable (`EMAILABLE_SERVER_TIMEOUT`, default `5`)
+- `timeout.client` — how long this application waits for the response (`EMAILABLE_CLIENT_TIMEOUT`, default `6`). Keep it above `timeout.server`.
+- `retry.times` — total attempts per verification (`EMAILABLE_RETRY_TIMES`, default `2`)
+- `retry.sleep_milliseconds` — pause between attempts (`EMAILABLE_RETRY_SLEEP`, default `100`)
 
-The credentials remain separate from the provider-neutral core configuration.
+Only transient faults are retried: a connection failure, or a server-side 5xx.
+A 4xx is never retried — a bad key or a rate limit cannot resolve itself, and
+retrying it would only burn paid API quota.
+
+```env
+EMAILABLE_HOST=https://api.emailable.com/v1/verify
+EMAILABLE_API_KEY=your-key
+
+EMAILABLE_CLIENT_TIMEOUT=6
+EMAILABLE_SERVER_TIMEOUT=5
+EMAILABLE_RETRY_TIMES=2
+EMAILABLE_RETRY_SLEEP=100
+```
+
+Timeouts and retry behavior are configured here, not in the core package: the
+core knows nothing about how a provider communicates.
 
 ## Verification Outcomes
 

@@ -9,7 +9,7 @@ use Symplify\MonorepoBuilder\Release\ReleaseWorker\PushTagReleaseWorker;
 use Symplify\MonorepoBuilder\Release\ReleaseWorker\TagVersionReleaseWorker;
 
 return static function (MBConfig $config): void {
-    $config->defaultBranch('1.x');
+    $config->defaultBranch('2.x');
     $config->packageDirectories([
         __DIR__ . '/src/Drivers',
     ]);

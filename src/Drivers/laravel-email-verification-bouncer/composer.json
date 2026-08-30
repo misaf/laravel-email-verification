@@ -30,7 +30,7 @@
         "php": "^8.4",
         "illuminate/http": "^13.0",
         "illuminate/support": "^13.0",
-        "misaf/laravel-email-verification": "^1.0",
+        "misaf/laravel-email-verification": "^2.0",
         "spatie/laravel-package-tools": "^1.93"
     },
     "minimum-stability": "stable",

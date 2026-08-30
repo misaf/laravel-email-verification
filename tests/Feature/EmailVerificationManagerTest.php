@@ -14,7 +14,7 @@ function manager(): EmailVerificationManager
 }
 
 it('resolves the null driver as the default', function (): void {
-    config(['laravel-email-verification.default' => 'null']);
+    config(['email-verification.default' => 'null']);
 
     expect(manager()->driver())->toBeInstanceOf(NullEmailVerification::class)
         ->and(manager()->driver()->verify('user@example.com'))->toBe(EmailVerificationStatus::Deliverable);
@@ -47,14 +47,14 @@ it('resolves a registered driver as the configured default', function (): void {
             return EmailVerificationStatus::Risky;
         }
     });
-    config(['laravel-email-verification.default' => 'custom-default']);
+    config(['email-verification.default' => 'custom-default']);
 
     expect($manager->driver()->verify('user@example.com'))
         ->toBe(EmailVerificationStatus::Risky);
 });
 
 it('fails validation when the resolved driver reports the address undeliverable', function (): void {
-    config(['laravel-email-verification.allowed_domains' => []]);
+    config(['email-verification.allowed_domains' => []]);
 
     manager()->extend('always-undeliverable', fn(): EmailVerification => new class implements EmailVerification {
         public function verify(string $email): EmailVerificationStatus
@@ -68,5 +68,5 @@ it('fails validation when the resolved driver reports the address undeliverable'
         $failures[] = $message;
     });
 
-    expect($failures)->toBe([__('laravel-email-verification::validation.email.undeliverable')]);
+    expect($failures)->toBe(['This :attribute is invalid and cannot be delivered. Please provide a valid one.']);
 });

@@ -2,24 +2,23 @@
 
 declare(strict_types=1);
 
-use Misaf\LaravelEmailVerification\EmailVerificationManager;
-
 arch()->preset()->php();
 arch()->preset()->security();
 arch()->preset()->laravel();
 
+/*
+ * The trailing separator matters: without it the expectation also matches the
+ * sibling Misaf\LaravelEmailVerificationBouncer and ...Emailable namespaces.
+ */
+$core = 'Misaf\LaravelEmailVerification\\';
+
 arch('the core remains provider neutral')
-    ->expect([
-        'Misaf\LaravelEmailVerification\Contracts',
-        'Misaf\LaravelEmailVerification\Enums',
-        'Misaf\LaravelEmailVerification\Facades',
-        'Misaf\LaravelEmailVerification\Providers',
-        'Misaf\LaravelEmailVerification\Rules',
-        'Misaf\LaravelEmailVerification\Support',
-        'Misaf\LaravelEmailVerification\Drivers',
-        EmailVerificationManager::class,
-    ])
+    ->expect($core)
     ->not->toUse([
         'Misaf\LaravelEmailVerificationBouncer',
         'Misaf\LaravelEmailVerificationEmailable',
     ]);
+
+arch('the core does not know how providers communicate')
+    ->expect($core)
+    ->not->toUse('Illuminate\Http\Client');

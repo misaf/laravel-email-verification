@@ -3,7 +3,7 @@ name: Split packages
 on:
   push:
     branches:
-      - 1.x
+      - 2.x
     tags:
       - '*.*.*'
 
@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MONOREPO_SPLIT_TOKEN }}
         with:
-          branch: 1.x
+          branch: 2.x
           package_directory: src/Drivers/${{ matrix.package }}
           repository_organization: misaf
           repository_name: ${{ matrix.package }}
@@ -45,7 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MONOREPO_SPLIT_TOKEN }}
         with:
-          branch: 1.x
+          branch: 2.x
           tag: ${{ github.ref_name }}
           package_directory: src/Drivers/${{ matrix.package }}
           repository_organization: misaf

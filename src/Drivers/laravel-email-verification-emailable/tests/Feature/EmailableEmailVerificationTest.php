@@ -6,18 +6,12 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Misaf\LaravelEmailVerification\EmailVerificationManager;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
-use Misaf\LaravelEmailVerificationEmailable\EmailableEmailVerification;
 
 beforeEach(function (): void {
     config([
-        'laravel-email-verification-emailable.host'    => 'https://api.emailable.test/verify',
-        'laravel-email-verification-emailable.api_key' => 'test-key',
+        'email-verification-emailable.host'    => 'https://api.emailable.test/verify',
+        'email-verification-emailable.api_key' => 'test-key',
     ]);
-});
-
-it('registers the emailable driver on the manager', function (): void {
-    expect(app(EmailVerificationManager::class)->driver('emailable'))
-        ->toBeInstanceOf(EmailableEmailVerification::class);
 });
 
 it('sends the expected request to the configured endpoint', function (): void {
@@ -120,4 +114,41 @@ it('handles an unexpected client exception', function (): void {
 
     expect(app(EmailVerificationManager::class)->driver('emailable')->verify('user@example.com'))
         ->toBe(EmailVerificationStatus::Unverifiable);
+});
+
+it('honours the package attempt budget', function (): void {
+    config([
+        'email-verification-emailable.retry.times'              => 3,
+        'email-verification-emailable.retry.sleep_milliseconds' => 0,
+    ]);
+    Http::fake(['*' => Http::response(null, 500)]);
+
+    expect(app(EmailVerificationManager::class)->driver('emailable')->verify('user@example.com'))
+        ->toBe(EmailVerificationStatus::Unverifiable);
+
+    Http::assertSentCount(3);
+});
+
+it('sends the configured server-side timeout', function (): void {
+    config(['email-verification-emailable.timeout.server' => 9]);
+    Http::fake(['*' => Http::response(['state' => 'deliverable'], 200)]);
+
+    app(EmailVerificationManager::class)->driver('emailable')->verify('user@example.com');
+
+    Http::assertSent(fn($request): bool => 9 === $request['timeout']);
+});
+
+it('applies the configured client timeout', function (): void {
+    config(['email-verification-emailable.timeout.client' => 11]);
+
+    $timeout = null;
+    Http::fake(function ($request, array $options) use (&$timeout) {
+        $timeout = $options['timeout'] ?? null;
+
+        return Http::response(['state' => 'deliverable'], 200);
+    });
+
+    app(EmailVerificationManager::class)->driver('emailable')->verify('user@example.com');
+
+    expect($timeout)->toBe(11);
 });

@@ -12,6 +12,7 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
             <directory>src/Drivers/*/tests/Feature</directory>
+            <directory>src/Drivers/*/tests/Registration</directory>
         </testsuite>
         <testsuite name="Architecture">
             <file>tests/ArchTest.php</file>

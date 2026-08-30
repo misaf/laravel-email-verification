@@ -6,18 +6,12 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Misaf\LaravelEmailVerification\EmailVerificationManager;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
-use Misaf\LaravelEmailVerificationBouncer\BouncerEmailVerification;
 
 beforeEach(function (): void {
     config([
-        'laravel-email-verification-bouncer.host'    => 'https://api.usebouncer.test/v1.1/email/verify',
-        'laravel-email-verification-bouncer.api_key' => 'test-key',
+        'email-verification-bouncer.host'    => 'https://api.usebouncer.test/v1.1/email/verify',
+        'email-verification-bouncer.api_key' => 'test-key',
     ]);
-});
-
-it('registers the bouncer driver on the manager', function (): void {
-    expect(app(EmailVerificationManager::class)->driver('bouncer'))
-        ->toBeInstanceOf(BouncerEmailVerification::class);
 });
 
 it('sends the expected request to the configured endpoint', function (): void {
@@ -130,10 +124,10 @@ it('handles an unexpected client exception', function (): void {
         ->toBe(EmailVerificationStatus::Unverifiable);
 });
 
-it('honours a configured attempt budget', function (): void {
+it('honours the package attempt budget', function (): void {
     config([
-        'laravel-email-verification.retry.times'              => 3,
-        'laravel-email-verification.retry.sleep_milliseconds' => 0,
+        'email-verification-bouncer.retry.times'              => 3,
+        'email-verification-bouncer.retry.sleep_milliseconds' => 0,
     ]);
     Http::fake(['*' => Http::response(null, 500)]);
 
@@ -141,4 +135,28 @@ it('honours a configured attempt budget', function (): void {
         ->toBe(EmailVerificationStatus::Unverifiable);
 
     Http::assertSentCount(3);
+});
+
+it('sends the configured server-side timeout', function (): void {
+    config(['email-verification-bouncer.timeout.server' => 9]);
+    Http::fake(['*' => Http::response(['status' => 'deliverable'], 200)]);
+
+    app(EmailVerificationManager::class)->driver('bouncer')->verify('user@example.com');
+
+    Http::assertSent(fn($request): bool => 9 === $request['timeout']);
+});
+
+it('applies the configured client timeout', function (): void {
+    config(['email-verification-bouncer.timeout.client' => 11]);
+
+    $timeout = null;
+    Http::fake(function ($request, array $options) use (&$timeout) {
+        $timeout = $options['timeout'] ?? null;
+
+        return Http::response(['status' => 'deliverable'], 200);
+    });
+
+    app(EmailVerificationManager::class)->driver('bouncer')->verify('user@example.com');
+
+    expect($timeout)->toBe(11);
 });

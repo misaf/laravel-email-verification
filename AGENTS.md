@@ -2,9 +2,9 @@
 
 ## Project Structure & Module Organization
 
-The root package provides the provider-neutral verification contract, manager, facade, rules, and `null` driver under `src/`. Package configuration lives in `config/`, while translations and Laravel Boost guidance live in `resources/`. Pest tests are in `tests/Feature`, with shared setup in `tests/TestCase.php` and architecture checks in `tests/ArchTest.php`.
+The root package provides the provider-neutral verification contract, manager, facade, rules, and `null` driver under `src/`. Package configuration lives in `config/`, while translations and Laravel Boost guidance live in `resources/`. Pest tests are in `tests/Feature`, with shared setup in `tests/TestCase.php` and architecture checks in `tests/ArchTest.php`. Driver packages additionally keep `tests/Registration`, which boots the providers in the reverse order to prove registration order cannot matter.
 
-First-party integrations are independent packages under `src/Drivers/laravel-email-verification-{bouncer,emailable}`. Each owns its `composer.json`, source, configuration, tests, documentation, and license. Keep provider SDK and HTTP behavior inside its driver package; the core must remain provider-neutral.
+First-party integrations are independent packages under `src/Drivers/laravel-email-verification-{bouncer,emailable}`. Each owns its `composer.json`, source, configuration, tests, documentation, and license. Keep provider SDK and HTTP behavior — endpoints, credentials, timeouts, retries, response mapping, and provider logging — inside its driver package. The core must remain provider-neutral and must not use `Illuminate\Http\Client`.
 
 ## Build, Test, and Development Commands
 
@@ -17,7 +17,7 @@ First-party integrations are independent packages under `src/Drivers/laravel-ema
 
 ## Coding Style & Naming Conventions
 
-Use strict types, PSR-4 namespaces, four-space indentation, and the rules in `pint.json`. Classes and enums use StudlyCase (`EmailVerificationStatus`); methods and variables use camelCase; configuration keys use snake_case. Match namespace ownership to directory layout. Depend on `Contracts\EmailVerification` across package boundaries instead of concrete provider implementations.
+Use strict types, PSR-4 namespaces, four-space indentation, and the rules in `pint.json`. Classes and enums use StudlyCase (`EmailVerificationStatus`); methods and variables use camelCase; configuration keys use snake_case. Match namespace ownership to directory layout. Depend on `Contracts\EmailVerification` across package boundaries instead of concrete provider implementations. A small amount of duplication between the two driver packages is preferred over a shared provider abstraction.
 
 ## Testing Guidelines
 

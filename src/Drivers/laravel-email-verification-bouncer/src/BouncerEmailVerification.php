@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Misaf\LaravelEmailVerification\Contracts\EmailVerification;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
-use Misaf\LaravelEmailVerification\Support\TransientFault;
 use Throwable;
 
 /**
@@ -18,16 +17,11 @@ use Throwable;
  */
 final class BouncerEmailVerification implements EmailVerification
 {
-    /**
-     * Server-side verification budget; must stay below the HTTP client timeout.
-     */
-    private const int SERVER_TIMEOUT = 5;
-
-    private const int CLIENT_TIMEOUT = 6;
-
     public function __construct(
         private string $host,
         private string $apiKey,
+        private int $serverTimeout = 5,
+        private int $clientTimeout = 6,
         private int $retryTimes = 2,
         private int $retrySleepMilliseconds = 100,
     ) {}
@@ -35,11 +29,11 @@ final class BouncerEmailVerification implements EmailVerification
     public function verify(string $email): EmailVerificationStatus
     {
         try {
-            $response = Http::timeout(self::CLIENT_TIMEOUT)
+            $response = Http::timeout($this->clientTimeout)
                 ->retry(
                     $this->retryTimes,
                     $this->retrySleepMilliseconds,
-                    TransientFault::shouldRetry(...),
+                    $this->shouldRetry(...),
                 )
                 ->withHeaders([
                     'accept'    => 'application/json',
@@ -47,7 +41,7 @@ final class BouncerEmailVerification implements EmailVerification
                 ])
                 ->get($this->host, [
                     'email'   => $email,
-                    'timeout' => self::SERVER_TIMEOUT,
+                    'timeout' => $this->serverTimeout,
                 ]);
 
             $payload = $response->ok() ? $response->json() : null;
@@ -83,5 +77,21 @@ final class BouncerEmailVerification implements EmailVerification
         }
 
         return EmailVerificationStatus::Unverifiable;
+    }
+
+    /**
+     * Retry only faults that a later attempt could plausibly resolve: a
+     * connection-level failure, or a server-side 5xx. Retrying a 4xx — a bad
+     * key, a malformed address, or a 429 rate limit — burns paid API quota
+     * without any chance of a different answer.
+     */
+    private function shouldRetry(Throwable $exception): bool
+    {
+        if ($exception instanceof ConnectionException) {
+            return true;
+        }
+
+        return $exception instanceof RequestException
+            && $exception->response->serverError();
     }
 }
