@@ -15,6 +15,7 @@ arch('the core remains provider neutral')
         'Misaf\LaravelEmailVerification\Facades',
         'Misaf\LaravelEmailVerification\Providers',
         'Misaf\LaravelEmailVerification\Rules',
+        'Misaf\LaravelEmailVerification\Support',
         'Misaf\LaravelEmailVerification\Drivers',
         EmailVerificationManager::class,
     ])

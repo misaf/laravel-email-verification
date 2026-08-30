@@ -79,7 +79,7 @@ it('treats a rate limited request as unverifiable', function (): void {
 
 it('treats a malformed payload as unverifiable', function (): void {
     Http::fake(['*' => Http::response(['unexpected' => true], 200)]);
-    Log::shouldReceive('error')
+    Log::shouldReceive('warning')
         ->once()
         ->with('Bouncer API returned an unexpected response.', ['status' => 200]);
 
@@ -107,7 +107,7 @@ it('retries a server error before giving up', function (): void {
 
 it('retries a connection failure before returning unverifiable', function (): void {
     Http::fake(['*' => Http::failedConnection('Connection failed.')]);
-    Log::shouldReceive('error')
+    Log::shouldReceive('warning')
         ->once()
         ->with('Bouncer API connection timeout.');
 
@@ -121,8 +121,24 @@ it('handles an unexpected client exception', function (): void {
     Http::fake(fn() => throw new RuntimeException('Unexpected failure.'));
     Log::shouldReceive('error')
         ->once()
-        ->with('Unexpected Bouncer verification error.', ['exception' => RuntimeException::class]);
+        ->with('Unexpected Bouncer verification error.', [
+            'exception' => RuntimeException::class,
+            'message'   => 'Unexpected failure.',
+        ]);
 
     expect(app(EmailVerificationManager::class)->driver('bouncer')->verify('user@example.com'))
         ->toBe(EmailVerificationStatus::Unverifiable);
+});
+
+it('honours a configured attempt budget', function (): void {
+    config([
+        'laravel-email-verification.retry.times'              => 3,
+        'laravel-email-verification.retry.sleep_milliseconds' => 0,
+    ]);
+    Http::fake(['*' => Http::response(null, 500)]);
+
+    expect(app(EmailVerificationManager::class)->driver('bouncer')->verify('user@example.com'))
+        ->toBe(EmailVerificationStatus::Unverifiable);
+
+    Http::assertSentCount(3);
 });

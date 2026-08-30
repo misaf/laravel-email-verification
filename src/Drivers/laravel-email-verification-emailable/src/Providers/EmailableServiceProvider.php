@@ -31,8 +31,9 @@ final class EmailableServiceProvider extends PackageServiceProvider
             fn(): EmailVerification => new EmailableEmailVerification(
                 Config::string('laravel-email-verification-emailable.host'),
                 Config::string('laravel-email-verification-emailable.api_key'),
+                Config::integer('laravel-email-verification.retry.times', 2),
+                Config::integer('laravel-email-verification.retry.sleep_milliseconds', 100),
             ),
         );
     }
-
 }

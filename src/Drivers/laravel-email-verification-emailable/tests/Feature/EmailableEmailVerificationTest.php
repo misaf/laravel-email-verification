@@ -29,7 +29,8 @@ it('sends the expected request to the configured endpoint', function (): void {
         return 'GET' === $request->method()
             && str_starts_with($request->url(), 'https://api.emailable.test/verify?')
             && 'test-key' === $request['api_key']
-            && 'user@example.com' === $request['email'];
+            && 'user@example.com' === $request['email']
+            && 5 === $request['timeout'];
     });
 });
 
@@ -70,7 +71,7 @@ it('treats a failed request as unverifiable', function (): void {
 
 it('treats an unexpected payload as unverifiable', function (): void {
     Http::fake(['*' => Http::response(['unexpected' => true], 200)]);
-    Log::shouldReceive('error')
+    Log::shouldReceive('warning')
         ->once()
         ->with('Emailable API returned an unexpected response.', ['status' => 200]);
 
@@ -98,7 +99,7 @@ it('retries a server error before giving up', function (): void {
 
 it('retries a connection failure before returning unverifiable', function (): void {
     Http::fake(['*' => Http::failedConnection('Connection failed.')]);
-    Log::shouldReceive('error')
+    Log::shouldReceive('warning')
         ->once()
         ->with('Emailable API connection timeout.');
 
@@ -112,7 +113,10 @@ it('handles an unexpected client exception', function (): void {
     Http::fake(fn() => throw new RuntimeException('Unexpected failure.'));
     Log::shouldReceive('error')
         ->once()
-        ->with('Unexpected Emailable verification error.', ['exception' => RuntimeException::class]);
+        ->with('Unexpected Emailable verification error.', [
+            'exception' => RuntimeException::class,
+            'message'   => 'Unexpected failure.',
+        ]);
 
     expect(app(EmailVerificationManager::class)->driver('emailable')->verify('user@example.com'))
         ->toBe(EmailVerificationStatus::Unverifiable);

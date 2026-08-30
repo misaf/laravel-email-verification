@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Misaf\LaravelEmailVerification\Contracts\EmailVerification;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
+use Misaf\LaravelEmailVerification\Support\TransientFault;
 use Throwable;
 
 /**
@@ -17,59 +18,67 @@ use Throwable;
  */
 final class EmailableEmailVerification implements EmailVerification
 {
+    /**
+     * Server-side verification budget; must stay below the HTTP client timeout.
+     */
+    private const int SERVER_TIMEOUT = 5;
+
+    private const int CLIENT_TIMEOUT = 6;
+
     public function __construct(
         private string $host,
         private string $apiKey,
+        private int $retryTimes = 2,
+        private int $retrySleepMilliseconds = 100,
     ) {}
 
     public function verify(string $email): EmailVerificationStatus
     {
         try {
-            $response = Http::timeout(6)
-                ->retry(2, 100, $this->shouldRetry(...))
+            $response = Http::timeout(self::CLIENT_TIMEOUT)
+                ->retry(
+                    $this->retryTimes,
+                    $this->retrySleepMilliseconds,
+                    TransientFault::shouldRetry(...),
+                )
                 ->get($this->host, [
                     'api_key' => $this->apiKey,
                     'email'   => $email,
+                    'timeout' => self::SERVER_TIMEOUT,
                 ]);
 
             $payload = $response->ok() ? $response->json() : null;
+            $state = is_array($payload) ? ($payload['state'] ?? null) : null;
 
-            if ( ! is_array($payload) || ! isset($payload['state'])) {
-                Log::error('Emailable API returned an unexpected response.', ['status' => $response->status()]);
+            if ( ! is_string($state)) {
+                Log::warning('Emailable API returned an unexpected response.', ['status' => $response->status()]);
 
                 return EmailVerificationStatus::Unverifiable;
             }
 
-            return match ($payload['state']) {
+            return match ($state) {
                 'deliverable'   => EmailVerificationStatus::Deliverable,
                 'undeliverable' => EmailVerificationStatus::Undeliverable,
                 'risky'         => EmailVerificationStatus::Risky,
                 default         => EmailVerificationStatus::Unverifiable,
             };
         } catch (ConnectionException) {
-            Log::error('Emailable API connection timeout.');
+            Log::warning('Emailable API connection timeout.');
         } catch (RequestException $e) {
-            Log::error('Emailable API request error.', ['status' => $e->response->status()]);
+            $status = $e->response->status();
+
+            // A rejected key stays broken until someone rotates it, so it earns
+            // an error. Rate limits and server faults clear on their own.
+            $level = in_array($status, [401, 403], true) ? 'error' : 'warning';
+
+            Log::log($level, 'Emailable API request error.', ['status' => $status]);
         } catch (Throwable $e) {
-            Log::error('Unexpected Emailable verification error.', ['exception' => $e::class]);
+            Log::error('Unexpected Emailable verification error.', [
+                'exception' => $e::class,
+                'message'   => $e->getMessage(),
+            ]);
         }
 
         return EmailVerificationStatus::Unverifiable;
-    }
-
-    /**
-     * Retry only faults that a later attempt could plausibly resolve: a
-     * connection-level failure, or a server-side 5xx. Retrying a 4xx — a bad
-     * key, a malformed address, or a 429 rate limit — burns paid API quota
-     * without any chance of a different answer.
-     */
-    private function shouldRetry(Throwable $exception): bool
-    {
-        if ($exception instanceof ConnectionException) {
-            return true;
-        }
-
-        return $exception instanceof RequestException
-            && $exception->response->serverError();
     }
 }

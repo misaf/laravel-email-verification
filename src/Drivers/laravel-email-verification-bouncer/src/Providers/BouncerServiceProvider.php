@@ -31,8 +31,9 @@ final class BouncerServiceProvider extends PackageServiceProvider
             fn(): EmailVerification => new BouncerEmailVerification(
                 Config::string('laravel-email-verification-bouncer.host'),
                 Config::string('laravel-email-verification-bouncer.api_key'),
+                Config::integer('laravel-email-verification.retry.times', 2),
+                Config::integer('laravel-email-verification.retry.sleep_milliseconds', 100),
             ),
         );
     }
-
 }

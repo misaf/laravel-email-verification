@@ -32,5 +32,4 @@ final class EmailVerificationServiceProvider extends PackageServiceProvider
 
         $this->app->alias(EmailVerificationManager::class, 'email-verification');
     }
-
 }
