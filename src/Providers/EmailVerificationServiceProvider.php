@@ -19,7 +19,9 @@ final class EmailVerificationServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasTranslations()
             ->hasInstallCommand(function (InstallCommand $command): void {
-                $command->askToStarRepoOnGitHub('misaf/laravel-email-verification');
+                $command
+                    ->publishConfigFile()
+                    ->askToStarRepoOnGitHub('misaf/laravel-email-verification');
             });
     }
 

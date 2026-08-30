@@ -38,6 +38,20 @@ it('registers the install command under the short name', function (): void {
     expect(Artisan::all())->toHaveKey('email-verification:install');
 });
 
+it('publishes the config file when the install command runs', function (): void {
+    $published = config_path('email-verification.php');
+
+    expect(file_exists($published))->toBeFalse();
+
+    $this->artisan('email-verification:install')
+        ->expectsConfirmation('Would you like to star our repo on GitHub?', 'no')
+        ->assertSuccessful();
+
+    expect(file_exists($published))->toBeTrue();
+})->after(function (): void {
+    @unlink(config_path('email-verification.php'));
+});
+
 it('resolves every failure message from the package translation namespace', function (string $key): void {
     expect(Lang::has("email-verification::validation.email.{$key}"))->toBeTrue()
         ->and(__("email-verification::validation.email.{$key}"))
