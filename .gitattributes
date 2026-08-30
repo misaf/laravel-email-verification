@@ -7,5 +7,7 @@
 *.php diff=php
 
 /.github export-ignore
+/Drivers export-ignore
+/tests export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore

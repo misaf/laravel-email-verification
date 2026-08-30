@@ -32,3 +32,17 @@ it('registers the config file under the short-name publish tag', function (): vo
 it('registers the install command under the short name', function (): void {
     expect(Artisan::all())->toHaveKey('email-verification-bouncer:install');
 });
+
+it('publishes the config file when the install command runs', function (): void {
+    $published = config_path('email-verification-bouncer.php');
+
+    expect(file_exists($published))->toBeFalse();
+
+    $this->artisan('email-verification-bouncer:install')
+        ->expectsConfirmation('Would you like to star our repo on GitHub?', 'no')
+        ->assertSuccessful();
+
+    expect(file_exists($published))->toBeTrue();
+})->after(function (): void {
+    @unlink(config_path('email-verification-bouncer.php'));
+});

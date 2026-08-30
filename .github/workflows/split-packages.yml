@@ -33,7 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MONOREPO_SPLIT_TOKEN }}
         with:
           branch: 2.x
-          package_directory: src/Drivers/${{ matrix.package }}
+          package_directory: Drivers/${{ matrix.package }}
           repository_organization: misaf
           repository_name: ${{ matrix.package }}
           user_name: misaf
@@ -47,7 +47,7 @@ jobs:
         with:
           branch: 2.x
           tag: ${{ github.ref_name }}
-          package_directory: src/Drivers/${{ matrix.package }}
+          package_directory: Drivers/${{ matrix.package }}
           repository_organization: misaf
           repository_name: ${{ matrix.package }}
           user_name: misaf

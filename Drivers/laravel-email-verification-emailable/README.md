@@ -39,8 +39,8 @@ Publish the config to override credentials:
 php artisan vendor:publish --tag=email-verification-emailable-config
 ```
 
-An install command is also available, which publishes the config and walks you
-through setup:
+An install command is also available. It publishes the same config file and
+then offers to open the repository on GitHub:
 
 ```bash
 php artisan email-verification-emailable:install
@@ -121,7 +121,7 @@ monorepo, published for installation via Composer. Its contents are generated,
 so commits made here are overwritten by the next split.
 
 Open issues and pull requests against the monorepo, where this driver lives at
-`src/Drivers/laravel-email-verification-emailable` and its tests run alongside the
+`Drivers/laravel-email-verification-emailable` and its tests run alongside the
 core package.
 
 ## License

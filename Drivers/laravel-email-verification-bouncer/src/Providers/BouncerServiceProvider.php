@@ -2,25 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Misaf\LaravelEmailVerificationEmailable\Providers;
+namespace Misaf\LaravelEmailVerificationBouncer\Providers;
 
 use Illuminate\Support\Facades\Config;
 use Misaf\LaravelEmailVerification\Contracts\EmailVerification;
 use Misaf\LaravelEmailVerification\EmailVerificationManager;
-use Misaf\LaravelEmailVerificationEmailable\EmailableEmailVerification;
+use Misaf\LaravelEmailVerificationBouncer\BouncerEmailVerification;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-final class EmailableServiceProvider extends PackageServiceProvider
+final class BouncerServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('laravel-email-verification-emailable')
+            ->name('laravel-email-verification-bouncer')
             ->hasConfigFile()
             ->hasInstallCommand(function (InstallCommand $command): void {
-                $command->askToStarRepoOnGitHub('misaf/laravel-email-verification-emailable');
+                $command
+                    ->publishConfigFile()
+                    ->askToStarRepoOnGitHub('misaf/laravel-email-verification-bouncer');
             });
     }
 
@@ -33,13 +35,13 @@ final class EmailableServiceProvider extends PackageServiceProvider
         $this->callAfterResolving(
             EmailVerificationManager::class,
             function (EmailVerificationManager $manager): void {
-                $manager->extend('emailable', fn(): EmailVerification => new EmailableEmailVerification(
-                    Config::string('email-verification-emailable.host'),
-                    Config::string('email-verification-emailable.api_key'),
-                    Config::integer('email-verification-emailable.timeout.server', 5),
-                    Config::integer('email-verification-emailable.timeout.client', 6),
-                    Config::integer('email-verification-emailable.retry.times', 2),
-                    Config::integer('email-verification-emailable.retry.sleep_milliseconds', 100),
+                $manager->extend('bouncer', fn(): EmailVerification => new BouncerEmailVerification(
+                    Config::string('email-verification-bouncer.host'),
+                    Config::string('email-verification-bouncer.api_key'),
+                    Config::integer('email-verification-bouncer.timeout.server', 5),
+                    Config::integer('email-verification-bouncer.timeout.client', 6),
+                    Config::integer('email-verification-bouncer.retry.times', 2),
+                    Config::integer('email-verification-bouncer.retry.sleep_milliseconds', 100),
                 ));
             },
         );

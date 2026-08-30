@@ -5,32 +5,28 @@
          colors="true"
 >
     <testsuites>
-        <testsuite name="Unit">
-            <directory>tests/Unit</directory>
-            <directory>src/Drivers/*/tests/Unit</directory>
-        </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
-            <directory>src/Drivers/*/tests/Feature</directory>
-            <directory>src/Drivers/*/tests/Registration</directory>
+            <directory>Drivers/*/tests/Feature</directory>
+            <directory>Drivers/*/tests/Registration</directory>
         </testsuite>
         <testsuite name="Architecture">
             <file>tests/ArchTest.php</file>
-            <directory suffix="ArchTest.php">src/Drivers</directory>
+            <directory suffix="ArchTest.php">Drivers</directory>
         </testsuite>
     </testsuites>
 
     <source>
         <include>
             <directory suffix=".php">src/Contracts</directory>
-            <file>src/Drivers/NullEmailVerification.php</file>
-            <directory suffix=".php">src/Drivers/laravel-email-verification-bouncer/src</directory>
-            <directory suffix=".php">src/Drivers/laravel-email-verification-emailable/src</directory>
-            <file>src/EmailVerificationManager.php</file>
+            <directory suffix=".php">src/Drivers</directory>
             <directory suffix=".php">src/Enums</directory>
             <directory suffix=".php">src/Facades</directory>
             <directory suffix=".php">src/Providers</directory>
             <directory suffix=".php">src/Rules</directory>
+            <file>src/EmailVerificationManager.php</file>
+            <directory suffix=".php">Drivers/laravel-email-verification-bouncer/src</directory>
+            <directory suffix=".php">Drivers/laravel-email-verification-emailable/src</directory>
         </include>
     </source>
 

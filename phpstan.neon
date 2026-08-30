@@ -2,13 +2,14 @@ parameters:
 
     paths:
         - src
+        - Drivers
 
     excludePaths:
-        - src/Drivers/laravel-email-verification-bouncer/tests
-        - src/Drivers/laravel-email-verification-emailable/tests
+        - Drivers/laravel-email-verification-bouncer/tests
+        - Drivers/laravel-email-verification-emailable/tests
 
     configDirectories:
         - config
-        - src/Drivers/*/config
+        - Drivers/*/config
 
     level: 10

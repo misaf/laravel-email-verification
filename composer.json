@@ -1,6 +1,6 @@
 {
     "name": "misaf/laravel-email-verification",
-    "description": "Driver-based email verification manager for Laravel.",
+    "description": "Provider-neutral email domain and deliverability validation for Laravel applications.",
     "license": "MIT",
     "type": "library",
     "keywords": [
@@ -63,10 +63,10 @@
     "autoload-dev": {
         "psr-4": {
             "Misaf\\LaravelEmailVerification\\Tests\\": "tests/",
-            "Misaf\\LaravelEmailVerificationBouncer\\": "src/Drivers/laravel-email-verification-bouncer/src/",
-            "Misaf\\LaravelEmailVerificationBouncer\\Tests\\": "src/Drivers/laravel-email-verification-bouncer/tests/",
-            "Misaf\\LaravelEmailVerificationEmailable\\": "src/Drivers/laravel-email-verification-emailable/src/",
-            "Misaf\\LaravelEmailVerificationEmailable\\Tests\\": "src/Drivers/laravel-email-verification-emailable/tests/"
+            "Misaf\\LaravelEmailVerificationBouncer\\": "Drivers/laravel-email-verification-bouncer/src/",
+            "Misaf\\LaravelEmailVerificationBouncer\\Tests\\": "Drivers/laravel-email-verification-bouncer/tests/",
+            "Misaf\\LaravelEmailVerificationEmailable\\": "Drivers/laravel-email-verification-emailable/src/",
+            "Misaf\\LaravelEmailVerificationEmailable\\Tests\\": "Drivers/laravel-email-verification-emailable/tests/"
         }
     },
     "config": {
