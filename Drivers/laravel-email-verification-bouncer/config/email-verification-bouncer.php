@@ -9,8 +9,7 @@ return [
     | Bouncer API
     |--------------------------------------------------------------------------
     |
-    | Credentials for the Bouncer email verification API
-    | (https://usebouncer.com). The host is the real-time verify endpoint.
+    | Credentials for the Bouncer deliverability API (https://usebouncer.com).
     |
     */
 

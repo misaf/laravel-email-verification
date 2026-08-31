@@ -61,8 +61,8 @@ if ($status === EmailVerificationStatus::Deliverable) {
 
 `config/email-verification-bouncer.php`:
 
-- `host` — the real-time verify endpoint, normally `https://api.usebouncer.com/v1.1/email/verify`
-- `api_key` — your private Bouncer API key, from the dashboard under *API*; it is sent as an `x-api-key` header, never as a query parameter
+- `host` — the verification endpoint, normally `https://api.usebouncer.com/v1.1/email/verify`
+- `api_key` — your private Bouncer API key
 - `timeout.server` — the budget asked of Bouncer (`BOUNCER_SERVER_TIMEOUT`, default `5`)
 - `timeout.client` — how long this app waits (`BOUNCER_CLIENT_TIMEOUT`, default `6`); keep it above `timeout.server`
 - `retry.times` — attempts per verification (`BOUNCER_RETRY_TIMES`, default `2`)
@@ -87,9 +87,8 @@ retried, so a bad key or rate limit cannot burn paid quota.
 | `undeliverable` | `Undeliverable` | Fail |
 | `unknown` or unsupported | `Unverifiable` | Fail |
 
-Malformed payloads, failed HTTP responses (including 402 no-credits and 429
-rate-limit), timeouts, and exceptions also produce `Unverifiable`. They are
-never treated as deliverable.
+Malformed payloads, failed HTTP responses, timeouts, and exceptions also produce
+`Unverifiable`. They are never treated as deliverable.
 
 ## Contributing
 
