@@ -7,11 +7,6 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\ServiceProvider;
 use Misaf\LaravelEmailVerification\Providers\EmailVerificationServiceProvider;
 
-/**
- * The package short name drives the config file, the config key, the
- * translation namespace, the publish tags, and the install command. These are
- * the seams a rename silently breaks, so they are asserted directly.
- */
 it('merges the package configuration without the application setting it first', function (): void {
     expect(config('email-verification.default'))->toBe('null')
         ->and(config('email-verification.allowed_domains'))->toBe([])

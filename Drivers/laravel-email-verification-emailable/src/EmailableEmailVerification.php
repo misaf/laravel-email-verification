@@ -12,9 +12,6 @@ use Misaf\LaravelEmailVerification\Contracts\EmailVerification;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 use Throwable;
 
-/**
- * Verifies deliverability through the Emailable API (https://emailable.com).
- */
 final class EmailableEmailVerification implements EmailVerification
 {
     public function __construct(
@@ -76,12 +73,6 @@ final class EmailableEmailVerification implements EmailVerification
         return EmailVerificationStatus::Unverifiable;
     }
 
-    /**
-     * Retry only faults that a later attempt could plausibly resolve: a
-     * connection-level failure, or a server-side 5xx. Retrying a 4xx — a bad
-     * key, a malformed address, or a 429 rate limit — burns paid API quota
-     * without any chance of a different answer.
-     */
     private function shouldRetry(Throwable $exception): bool
     {
         if ($exception instanceof ConnectionException) {

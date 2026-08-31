@@ -13,11 +13,6 @@ use InvalidArgumentException;
 use Misaf\LaravelEmailVerification\Enums\EmailVerificationStatus;
 use Misaf\LaravelEmailVerification\Facades\EmailVerification;
 
-/**
- * Enforces the configured domain allow-list, then deliverability through the
- * resolved driver. Email syntax is Laravel's job — pair this rule with the
- * framework's own `email` rule, which should run first under `bail`.
- */
 final class EmailValidation implements ValidationRule
 {
     public function __construct(private ?string $driver = null) {}
