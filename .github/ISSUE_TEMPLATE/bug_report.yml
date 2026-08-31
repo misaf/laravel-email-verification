@@ -1,5 +1,5 @@
 name: Bug report
-description: Report reproducible incorrect behavior in the host app or a Vendra package.
+description: Report reproducible incorrect behavior in the core package or a driver package.
 title: "[Bug]: "
 labels:
   - bug
@@ -9,8 +9,8 @@ body:
     attributes:
       label: Scope
       options:
-        - Host application
-        - Vendra package
+        - Core package
+        - Driver package
         - Docker or deployment
         - Documentation
     validations:
@@ -20,7 +20,7 @@ body:
     attributes:
       label: Package
       description: Provide the package name when the issue is package-specific.
-      placeholder: misaf/vendra-example
+      placeholder: misaf/laravel-email-verification-bouncer
   - type: textarea
     id: behavior
     attributes:
@@ -45,7 +45,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Include Vendra version or commit, PHP, Laravel, database, and relevant package versions.
+      description: Include package version or commit, PHP, Laravel, database, and relevant package versions.
     validations:
       required: true
   - type: textarea
